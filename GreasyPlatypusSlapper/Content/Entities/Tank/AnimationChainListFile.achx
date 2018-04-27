@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AnimationChainArraySave xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <FileRelativeTextures>true</FileRelativeTextures>
+  <TimeMeasurementUnit>Undefined</TimeMeasurementUnit>
+  <CoordinateType>Pixel</CoordinateType>
+  <AnimationChain>
+    <Name>OrangeBody</Name>
+    <Frame>
+      <TextureName>../../globalcontent/spritesheet.png</TextureName>
+      <FrameLength>0.1</FrameLength>
+      <LeftCoordinate>32</LeftCoordinate>
+      <RightCoordinate>64</RightCoordinate>
+      <TopCoordinate>607</TopCoordinate>
+      <BottomCoordinate>640</BottomCoordinate>
+    </Frame>
+  </AnimationChain>
+  <AnimationChain>
+    <Name>RedBody</Name>
+    <Frame>
+      <TextureName>../../globalcontent/spritesheet.png</TextureName>
+      <FrameLength>0.1</FrameLength>
+      <LeftCoordinate>0</LeftCoordinate>
+      <RightCoordinate>32</RightCoordinate>
+      <TopCoordinate>608</TopCoordinate>
+      <BottomCoordinate>640</BottomCoordinate>
+    </Frame>
+  </AnimationChain>
+  <AnimationChain>
+    <Name>GrayBody</Name>
+    <Frame>
+      <TextureName>../../globalcontent/spritesheet.png</TextureName>
+      <FrameLength>0.1</FrameLength>
+      <LeftCoordinate>0</LeftCoordinate>
+      <RightCoordinate>32</RightCoordinate>
+      <TopCoordinate>640</TopCoordinate>
+      <BottomCoordinate>672</BottomCoordinate>
+    </Frame>
+  </AnimationChain>
+</AnimationChainArraySave>

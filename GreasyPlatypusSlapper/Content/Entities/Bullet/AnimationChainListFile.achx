@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AnimationChainArraySave xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <FileRelativeTextures>true</FileRelativeTextures>
+  <TimeMeasurementUnit>Undefined</TimeMeasurementUnit>
+  <CoordinateType>Pixel</CoordinateType>
+  <AnimationChain>
+    <Name>OrangeMissile</Name>
+    <Frame>
+      <TextureName>../../globalcontent/spritesheet.png</TextureName>
+      <FrameLength>0.1</FrameLength>
+      <LeftCoordinate>170</LeftCoordinate>
+      <RightCoordinate>182</RightCoordinate>
+      <TopCoordinate>621</TopCoordinate>
+      <BottomCoordinate>627</BottomCoordinate>
+    </Frame>
+  </AnimationChain>
+</AnimationChainArraySave>
