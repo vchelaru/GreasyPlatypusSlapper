@@ -72,23 +72,7 @@ namespace GreasyPlatypusSlapper.Entities
 
 		public void AssignDefaultInput()
 		{
-			var keyboard = InputManager.Keyboard;
-			movementInput = keyboard.Get2DInput(Microsoft.Xna.Framework.Input.Keys.A,
-				Microsoft.Xna.Framework.Input.Keys.D,
-				Microsoft.Xna.Framework.Input.Keys.W,
-				Microsoft.Xna.Framework.Input.Keys.S);
 
-			aimingInput = keyboard.Get2DInput(Microsoft.Xna.Framework.Input.Keys.Left,
-				Microsoft.Xna.Framework.Input.Keys.Right,
-				Microsoft.Xna.Framework.Input.Keys.Up,
-				Microsoft.Xna.Framework.Input.Keys.Down);
-
-			shootingInput = keyboard.GetKey(Microsoft.Xna.Framework.Input.Keys.Space);
-
-			if (GlobalContent.FeatureFlags[FeatureFlags.EnableBoost].IsEnabled)
-			{
-				boostInput = keyboard.GetKey(Keys.Q);
-			}
 		}
 
 		public void Die()
@@ -98,11 +82,17 @@ namespace GreasyPlatypusSlapper.Entities
 			Destroy();
 		}
 
-		public void LoadInput(I2DInput movementInput, I2DInput aimingInput, IPressableInput shootingInput)
+		public void LoadInput(I2DInput movementInput, I2DInput aimingInput, IPressableInput shootingInput, IPressableInput boostInput)
 		{
 			this.movementInput = movementInput ?? throw new ArgumentNullException("movementInput must not be null.");
 			this.aimingInput = aimingInput ?? throw new ArgumentNullException("aimingInput must not be null.");
-			this.shootingInput = shootingInput ?? throw new ArgumentNullException("shootingInput must not be null."); 
+			this.shootingInput = shootingInput ?? throw new ArgumentNullException("shootingInput must not be null.");
+
+			if (boostInput == null) throw new ArgumentNullException("boostInput must not be null");
+			if (GlobalContent.FeatureFlags[FeatureFlags.EnableBoost].IsEnabled)
+			{
+				this.boostInput = boostInput;
+			}
 		}
 
         private void CustomActivity()
@@ -214,7 +204,7 @@ namespace GreasyPlatypusSlapper.Entities
                 bullet.RotationZ = TurretInstance.RotationZ;
 
                 var BulletSpeed = 500;
-                bullet.Velocity = TurretInstance.RotationMatrix.Right * BulletSpeed;
+                bullet.Launch(TurretInstance.RotationMatrix.Right * BulletSpeed);
             }
         }
 

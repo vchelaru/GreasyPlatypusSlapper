@@ -2,6 +2,7 @@
 <objecttypes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <objecttype name="Bullet">
     <property name="Damage" type="float" default="25" />
+    <property name="MaxTravelDistance" type="float" default="1000" />
   </objecttype>
   <objecttype name="TreadEffect">
     <property name="AlphaRate" type="float" default="-0.15" />

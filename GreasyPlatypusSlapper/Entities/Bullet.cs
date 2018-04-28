@@ -9,6 +9,7 @@ using FlatRedBall.Graphics.Animation;
 using FlatRedBall.Graphics.Particle;
 using FlatRedBall.Math.Geometry;
 using GreasyPlatypusSlapper.DataTypes;
+using Microsoft.Xna.Framework;
 
 namespace GreasyPlatypusSlapper.Entities
 {
@@ -16,7 +17,7 @@ namespace GreasyPlatypusSlapper.Entities
 	{
 
         public int TeamIndex { get; set; }
-
+		private Vector3 startingLocation; 
 
         /// <summary>
         /// Initialization logic which is execute only one time for this Entity (unless the Entity is pooled).
@@ -34,7 +35,7 @@ namespace GreasyPlatypusSlapper.Entities
 
 		private void CustomActivity()
 		{
-
+			CheckMaxDistance(); 
 
 		}
 
@@ -49,5 +50,19 @@ namespace GreasyPlatypusSlapper.Entities
 
 
         }
+
+		private void CheckMaxDistance()
+		{
+			if (Vector3.Distance(startingLocation, this.Position) > MaxTravelDistance)
+			{
+				Destroy(); 
+			}
+		}
+
+		internal void Launch(Vector3 vector3)
+		{
+			startingLocation = this.Position; 
+			this.Velocity = vector3; 
+		}
 	}
 }

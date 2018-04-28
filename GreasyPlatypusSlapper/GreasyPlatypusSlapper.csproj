@@ -78,6 +78,8 @@
     <Compile Include="FileAliases.Generated.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GlobalContent.Generated.cs" />
+    <Compile Include="InputManagement\IManagesInputStates.cs" />
+    <Compile Include="InputManagement\IUserInputState.cs" />
     <Compile Include="Performance\IEntityFactory.Generated.cs" />
     <Compile Include="Performance\PoolList.Generated.cs" />
     <Compile Include="Program.cs" />

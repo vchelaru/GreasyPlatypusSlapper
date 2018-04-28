@@ -15,6 +15,7 @@ using FlatRedBall.Math.Collision;
 using GreasyPlatypusSlapper.Entities;
 using FlatRedBall.TileCollisions;
 using RedGrin;
+using Microsoft.Xna.Framework.Input;
 
 namespace GreasyPlatypusSlapper.Screens
 {
@@ -105,14 +106,36 @@ namespace GreasyPlatypusSlapper.Screens
 		void CreateTanksAndAssignInput()
 		{
 			//Test code for a single input. 
-			for(int i = 0; i < InputManager.Xbox360GamePads.Length; i++)
+			I2DInput movementInput;
+			I2DInput aimingInput;
+			IPressableInput shootingInput;
+			IPressableInput boostInput; 
+
+			if (InputManager.NumberOfConnectedGamePads > 0)
 			{
-				var gamePad = InputManager.Xbox360GamePads[i];
-				I2DInput movementInput = gamePad.LeftStick;
-				I2DInput aimingInput = gamePad.RightStick;
-				IPressableInput shootingInput = gamePad.RightTrigger;
-				Tank1Test.LoadInput(movementInput, aimingInput, shootingInput);
+				var gamePad = InputManager.Xbox360GamePads[0];//InputManager.Xbox360GamePads[i];
+				movementInput = gamePad.LeftStick;
+				aimingInput = gamePad.RightStick;
+				shootingInput = gamePad.RightTrigger;
+				boostInput = gamePad.LeftTrigger; 
 			}
+			else
+			{
+				var keyboard = InputManager.Keyboard;
+				movementInput = keyboard.Get2DInput(Microsoft.Xna.Framework.Input.Keys.A,
+					Microsoft.Xna.Framework.Input.Keys.D,
+					Microsoft.Xna.Framework.Input.Keys.W,
+					Microsoft.Xna.Framework.Input.Keys.S);
+
+				aimingInput = keyboard.Get2DInput(Microsoft.Xna.Framework.Input.Keys.Left,
+					Microsoft.Xna.Framework.Input.Keys.Right,
+					Microsoft.Xna.Framework.Input.Keys.Up,
+					Microsoft.Xna.Framework.Input.Keys.Down);
+
+				shootingInput = keyboard.GetKey(Microsoft.Xna.Framework.Input.Keys.Space);
+				boostInput = keyboard.GetKey(Keys.Q);
+			}
+			Tank1Test.LoadInput(movementInput, aimingInput, shootingInput, boostInput);
 		}
 
 		static void CustomLoadStaticContent(string contentManagerName)
