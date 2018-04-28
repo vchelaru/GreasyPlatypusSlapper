@@ -58,7 +58,7 @@
     </Compile>
     <Compile Include="Entities\Effects\Smoke.cs" />
     <Compile Include="Entities\Effects\Smoke.Generated.cs">
-      <DependentUpon>smoke.cs</DependentUpon>
+      <DependentUpon>Smoke.cs</DependentUpon>
     </Compile>
     <Compile Include="Entities\Effects\TreadEffect.cs" />
     <Compile Include="Entities\Effects\TreadEffect.Generated.cs">

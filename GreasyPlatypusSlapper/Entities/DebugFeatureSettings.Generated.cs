@@ -28,7 +28,8 @@ namespace GreasyPlatypusSlapper.Entities
         
         public static bool EnableTankTreads = true;
         public static bool EnableRocketTrails = true;
-        public static bool EnableTurnBasedMovement = true;
+        public static bool EnableTurnBasedMovement = false;
+        public static bool EnableBoost = false;
         public static bool EnableSmokeOnLowHealth = true;
         protected FlatRedBall.Graphics.Layer LayerProvidedByContainer = null;
         public DebugFeatureSettings () 

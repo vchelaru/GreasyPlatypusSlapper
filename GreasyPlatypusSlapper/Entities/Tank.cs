@@ -23,6 +23,9 @@ namespace GreasyPlatypusSlapper.Entities
         IPressableInput shootingInput;
         double lastTreadTime;
         float currentHealth;
+	    IPressableInput boostInput;
+	    double lastBoostTime;
+		float activeBoostModifier;
 
         public int TeamIndex { get; set; }
         public float CurrentSpeed
@@ -47,6 +50,8 @@ namespace GreasyPlatypusSlapper.Entities
         /// </summary>
 		private void CustomInitialize()
 		{
+            this.TurretInstance.ParentRotationChangesRotation = false;
+			lastBoostTime = 0 - BoostDurationInSeconds - BoostTimeoutInSeconds; // so we don't start boosted
             currentHealth = MaxHealth;
             this.TurretInstance.ParentRotationChangesRotation = false;
 		}
@@ -78,6 +83,11 @@ namespace GreasyPlatypusSlapper.Entities
                 Microsoft.Xna.Framework.Input.Keys.Down);
 
             shootingInput = keyboard.GetKey(Microsoft.Xna.Framework.Input.Keys.Space);
+
+            if (DebugFeatureSettings.EnableBoost)
+            {
+                boostInput = keyboard.GetKey(Keys.Q);
+            }
         }
 
         public void Die()
@@ -89,6 +99,8 @@ namespace GreasyPlatypusSlapper.Entities
 
         private void CustomActivity()
 		{
+			CalculateBoostModifier();
+
             ApplyMovement();
 
             ApplyTurretAiming();
@@ -134,6 +146,11 @@ namespace GreasyPlatypusSlapper.Entities
                     this.RotationZVelocity = 0;
                 }
             }
+
+	        if (activeBoostModifier > 0)
+	        {
+		        Velocity *= activeBoostModifier;
+	        }
         }
 
         private void ApplyTurretAiming()
@@ -202,6 +219,39 @@ namespace GreasyPlatypusSlapper.Entities
 		    Velocity = RotationMatrix.Right * forwardVelocity;
 	    }
 
+	    private void CalculateBoostModifier()
+	    {
+		    if (!DebugFeatureSettings.EnableBoost)
+		    {
+			    return;
+		    }
+
+		    var timeUntilNextBoost = lastBoostTime + BoostDurationInSeconds + BoostTimeoutInSeconds;
+
+		    // Allow a fresh boost if timeout is over
+		    if (boostInput?.WasJustPressed == true && timeUntilNextBoost < TimeManager.CurrentTime)
+		    {
+			    lastBoostTime = TimeManager.CurrentTime;
+		    }
+
+		    var timeSinceBoost = TimeManager.CurrentTime - lastBoostTime;
+	        var isInBoost = timeSinceBoost < BoostDurationInSeconds;
+		    var isInPenalty = !isInBoost &&
+		                       timeSinceBoost < BoostDurationInSeconds + BoostPenaltyDurationInSeconds;
+
+		    if (isInBoost)
+		    {
+			    activeBoostModifier = BoostSpeedMultiplier;
+		    }
+		    else if (isInPenalty)
+		    {
+			    activeBoostModifier = BoostPenaltySpeedMultiplier;
+		    }
+		    else
+		    {
+			    activeBoostModifier = 0;
+		    }
+	    }
 
         private void CustomDestroy()
 		{

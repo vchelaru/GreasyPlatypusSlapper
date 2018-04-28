@@ -60,7 +60,12 @@ namespace GreasyPlatypusSlapper.Entities
         public float RoadSpeed = 200f;
         public float TreadSpacing = 5f;
         public float MaxHealth = 100f;
+        public float BoostDurationInSeconds = 1f;
+        public float BoostTimeoutInSeconds = 5f;
+        public float BoostPenaltySpeedMultiplier = 0.1f;
+        public float BoostPenaltyDurationInSeconds = 1f;
         public float LowHealthThreshold = 0.3f;
+        public float BoostSpeedMultiplier = 5f;
         private FlatRedBall.Math.Geometry.ShapeCollection mGeneratedCollision;
         public FlatRedBall.Math.Geometry.ShapeCollection Collision
         {
@@ -251,19 +256,19 @@ namespace GreasyPlatypusSlapper.Entities
             }
             if (SmokeInstance.Parent == null)
             {
-                SmokeInstance.Z = 3f;
-            }
-            else
-            {
-                SmokeInstance.RelativeZ = 3f;
-            }
-            if (SmokeInstance.Parent == null)
-            {
                 SmokeInstance.X = -8f;
             }
             else
             {
                 SmokeInstance.RelativeX = -8f;
+            }
+            if (SmokeInstance.Parent == null)
+            {
+                SmokeInstance.Z = 3f;
+            }
+            else
+            {
+                SmokeInstance.RelativeZ = 3f;
             }
             mGeneratedCollision = new FlatRedBall.Math.Geometry.ShapeCollection();
             mGeneratedCollision.Circles.AddOneWay(mCircleInstance);
@@ -359,19 +364,19 @@ namespace GreasyPlatypusSlapper.Entities
             TankShadow.ParentRotationChangesPosition = false;
             if (SmokeInstance.Parent == null)
             {
-                SmokeInstance.Z = 3f;
-            }
-            else
-            {
-                SmokeInstance.RelativeZ = 3f;
-            }
-            if (SmokeInstance.Parent == null)
-            {
                 SmokeInstance.X = -8f;
             }
             else
             {
                 SmokeInstance.RelativeX = -8f;
+            }
+            if (SmokeInstance.Parent == null)
+            {
+                SmokeInstance.Z = 3f;
+            }
+            else
+            {
+                SmokeInstance.RelativeZ = 3f;
             }
             SpriteInstanceCurrentChainName = "OrangeBody";
             DefaultSpeed = 100f;
@@ -379,7 +384,12 @@ namespace GreasyPlatypusSlapper.Entities
             RoadSpeed = 200f;
             TreadSpacing = 5f;
             MaxHealth = 100f;
+            BoostDurationInSeconds = 1f;
+            BoostTimeoutInSeconds = 5f;
+            BoostPenaltySpeedMultiplier = 0.1f;
+            BoostPenaltyDurationInSeconds = 1f;
             LowHealthThreshold = 0.3f;
+            BoostSpeedMultiplier = 5f;
         }
         public virtual void ConvertToManuallyUpdated () 
         {
