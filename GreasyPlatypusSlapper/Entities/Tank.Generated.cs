@@ -43,6 +43,7 @@ namespace GreasyPlatypusSlapper.Entities
         }
         private GreasyPlatypusSlapper.Entities.Turret TurretInstance;
         private FlatRedBall.Sprite TankShadow;
+        private GreasyPlatypusSlapper.Entities.Effects.Smoke SmokeInstance;
         public string SpriteInstanceCurrentChainName
         {
             get
@@ -59,6 +60,7 @@ namespace GreasyPlatypusSlapper.Entities
         public float RoadSpeed = 200f;
         public float TreadSpacing = 5f;
         public float MaxHealth = 100f;
+        public float LowHealthThreshold = 0.3f;
         private FlatRedBall.Math.Geometry.ShapeCollection mGeneratedCollision;
         public FlatRedBall.Math.Geometry.ShapeCollection Collision
         {
@@ -93,6 +95,8 @@ namespace GreasyPlatypusSlapper.Entities
             TurretInstance.Name = "TurretInstance";
             TankShadow = new FlatRedBall.Sprite();
             TankShadow.Name = "TankShadow";
+            SmokeInstance = new GreasyPlatypusSlapper.Entities.Effects.Smoke(ContentManagerName, false);
+            SmokeInstance.Name = "SmokeInstance";
             
             PostInitialize();
             if (addToManagers)
@@ -108,6 +112,7 @@ namespace GreasyPlatypusSlapper.Entities
             FlatRedBall.Math.Geometry.ShapeManager.AddToLayer(mCircleInstance, LayerProvidedByContainer);
             TurretInstance.ReAddToManagers(LayerProvidedByContainer);
             FlatRedBall.SpriteManager.AddToLayer(TankShadow, LayerProvidedByContainer);
+            SmokeInstance.ReAddToManagers(LayerProvidedByContainer);
         }
         public virtual void AddToManagers (FlatRedBall.Graphics.Layer layerToAddTo) 
         {
@@ -117,6 +122,7 @@ namespace GreasyPlatypusSlapper.Entities
             FlatRedBall.Math.Geometry.ShapeManager.AddToLayer(mCircleInstance, LayerProvidedByContainer);
             TurretInstance.AddToManagers(LayerProvidedByContainer);
             FlatRedBall.SpriteManager.AddToLayer(TankShadow, LayerProvidedByContainer);
+            SmokeInstance.AddToManagers(LayerProvidedByContainer);
             AddToManagersBottomUp(layerToAddTo);
             CustomInitialize();
         }
@@ -124,6 +130,7 @@ namespace GreasyPlatypusSlapper.Entities
         {
             
             TurretInstance.Activity();
+            SmokeInstance.Activity();
             CustomActivity();
         }
         public virtual void Destroy () 
@@ -146,6 +153,11 @@ namespace GreasyPlatypusSlapper.Entities
             if (TankShadow != null)
             {
                 FlatRedBall.SpriteManager.RemoveSprite(TankShadow);
+            }
+            if (SmokeInstance != null)
+            {
+                SmokeInstance.Destroy();
+                SmokeInstance.Detach();
             }
             mGeneratedCollision.RemoveFromManagers(clearThis: false);
             CustomDestroy();
@@ -232,6 +244,27 @@ namespace GreasyPlatypusSlapper.Entities
             TankShadow.AnimationChains = AnimationChainListFile;
             TankShadow.CurrentChainName = "TankShadow";
             TankShadow.ParentRotationChangesPosition = false;
+            if (SmokeInstance.Parent == null)
+            {
+                SmokeInstance.CopyAbsoluteToRelative();
+                SmokeInstance.AttachTo(this, false);
+            }
+            if (SmokeInstance.Parent == null)
+            {
+                SmokeInstance.Z = 3f;
+            }
+            else
+            {
+                SmokeInstance.RelativeZ = 3f;
+            }
+            if (SmokeInstance.Parent == null)
+            {
+                SmokeInstance.X = -8f;
+            }
+            else
+            {
+                SmokeInstance.RelativeX = -8f;
+            }
             mGeneratedCollision = new FlatRedBall.Math.Geometry.ShapeCollection();
             mGeneratedCollision.Circles.AddOneWay(mCircleInstance);
             FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = oldShapeManagerSuppressAdd;
@@ -256,6 +289,7 @@ namespace GreasyPlatypusSlapper.Entities
             {
                 FlatRedBall.SpriteManager.RemoveSpriteOneWay(TankShadow);
             }
+            SmokeInstance.RemoveFromManagers();
             mGeneratedCollision.RemoveFromManagers(clearThis: false);
         }
         public virtual void AssignCustomVariables (bool callOnContainedElements) 
@@ -263,6 +297,7 @@ namespace GreasyPlatypusSlapper.Entities
             if (callOnContainedElements)
             {
                 TurretInstance.AssignCustomVariables(true);
+                SmokeInstance.AssignCustomVariables(true);
             }
             if (SpriteInstance.Parent == null)
             {
@@ -322,12 +357,29 @@ namespace GreasyPlatypusSlapper.Entities
             TankShadow.AnimationChains = AnimationChainListFile;
             TankShadow.CurrentChainName = "TankShadow";
             TankShadow.ParentRotationChangesPosition = false;
+            if (SmokeInstance.Parent == null)
+            {
+                SmokeInstance.Z = 3f;
+            }
+            else
+            {
+                SmokeInstance.RelativeZ = 3f;
+            }
+            if (SmokeInstance.Parent == null)
+            {
+                SmokeInstance.X = -8f;
+            }
+            else
+            {
+                SmokeInstance.RelativeX = -8f;
+            }
             SpriteInstanceCurrentChainName = "OrangeBody";
             DefaultSpeed = 100f;
             MudSpeed = 50f;
             RoadSpeed = 200f;
             TreadSpacing = 5f;
             MaxHealth = 100f;
+            LowHealthThreshold = 0.3f;
         }
         public virtual void ConvertToManuallyUpdated () 
         {
@@ -336,6 +388,7 @@ namespace GreasyPlatypusSlapper.Entities
             FlatRedBall.SpriteManager.ConvertToManuallyUpdated(SpriteInstance);
             TurretInstance.ConvertToManuallyUpdated();
             FlatRedBall.SpriteManager.ConvertToManuallyUpdated(TankShadow);
+            SmokeInstance.ConvertToManuallyUpdated();
         }
         public static void LoadStaticContent (string contentManagerName) 
         {
@@ -373,6 +426,7 @@ namespace GreasyPlatypusSlapper.Entities
                 AnimationChainListFile = FlatRedBall.FlatRedBallServices.Load<FlatRedBall.Graphics.Animation.AnimationChainList>(@"content/entities/tank/animationchainlistfile.achx", ContentManagerName);
             }
             GreasyPlatypusSlapper.Entities.Turret.LoadStaticContent(contentManagerName);
+            GreasyPlatypusSlapper.Entities.Effects.Smoke.LoadStaticContent(contentManagerName);
             if (registerUnload && ContentManagerName != FlatRedBall.FlatRedBallServices.GlobalContentManager)
             {
                 lock (mLockObject)
@@ -442,6 +496,7 @@ namespace GreasyPlatypusSlapper.Entities
             FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(CircleInstance);
             TurretInstance.SetToIgnorePausing();
             FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(TankShadow);
+            SmokeInstance.SetToIgnorePausing();
         }
         public virtual void MoveToLayer (FlatRedBall.Graphics.Layer layerToMoveTo) 
         {
@@ -462,6 +517,7 @@ namespace GreasyPlatypusSlapper.Entities
                 layerToRemoveFrom.Remove(TankShadow);
             }
             FlatRedBall.SpriteManager.AddToLayer(TankShadow, layerToMoveTo);
+            SmokeInstance.MoveToLayer(layerToMoveTo);
             LayerProvidedByContainer = layerToMoveTo;
         }
     }

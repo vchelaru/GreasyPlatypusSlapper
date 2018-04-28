@@ -32,6 +32,13 @@ namespace GreasyPlatypusSlapper.Entities
                 return Velocity.Length();
             }
         }
+        public float CurrentHealthPercent
+        {
+            get
+            {
+                return currentHealth / MaxHealth;
+            }
+        }
 
         /// <summary>
         /// Initialization logic which is execute only one time for this Entity (unless the Entity is pooled).
@@ -91,6 +98,11 @@ namespace GreasyPlatypusSlapper.Entities
             if(DebugFeatureSettings.EnableTankTreads)
             {
                 TankTreadActivity();
+            }
+
+            if(DebugFeatureSettings.EnableSmokeOnLowHealth)
+            {
+                SmokeInstance.Emitting = CurrentHealthPercent < LowHealthThreshold;
             }
             
 		}

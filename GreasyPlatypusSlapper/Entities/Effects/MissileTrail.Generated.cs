@@ -28,7 +28,7 @@ namespace GreasyPlatypusSlapper.Entities.Effects
         static System.Collections.Generic.List<string> LoadedContentManagers = new System.Collections.Generic.List<string>();
         protected static FlatRedBall.Graphics.Animation.AnimationChainList Particles;
         
-        private FlatRedBall.Graphics.Particle.Emitter TrailEmitter;
+        private FlatRedBall.Graphics.Particle.Emitter EffectEmitter;
         protected FlatRedBall.Graphics.Layer LayerProvidedByContainer = null;
         public MissileTrail () 
         	: this(FlatRedBall.Screens.ScreenManager.CurrentScreen.ContentManagerName, true)
@@ -47,8 +47,8 @@ namespace GreasyPlatypusSlapper.Entities.Effects
         protected virtual void InitializeEntity (bool addToManagers) 
         {
             LoadStaticContent(ContentManagerName);
-            TrailEmitter = new FlatRedBall.Graphics.Particle.Emitter();
-            TrailEmitter.Name = "TrailEmitter";
+            EffectEmitter = new FlatRedBall.Graphics.Particle.Emitter();
+            EffectEmitter.Name = "EffectEmitter";
             
             PostInitialize();
             if (addToManagers)
@@ -60,29 +60,29 @@ namespace GreasyPlatypusSlapper.Entities.Effects
         {
             LayerProvidedByContainer = layerToAddTo;
             FlatRedBall.SpriteManager.AddPositionedObject(this);
-            FlatRedBall.SpriteManager.AddEmitter(TrailEmitter, LayerProvidedByContainer);
+            FlatRedBall.SpriteManager.AddEmitter(EffectEmitter, LayerProvidedByContainer);
         }
         public virtual void AddToManagers (FlatRedBall.Graphics.Layer layerToAddTo) 
         {
             LayerProvidedByContainer = layerToAddTo;
             FlatRedBall.SpriteManager.AddPositionedObject(this);
-            FlatRedBall.SpriteManager.AddEmitter(TrailEmitter, LayerProvidedByContainer);
+            FlatRedBall.SpriteManager.AddEmitter(EffectEmitter, LayerProvidedByContainer);
             AddToManagersBottomUp(layerToAddTo);
             CustomInitialize();
         }
         public virtual void Activity () 
         {
             
-            TrailEmitter.TimedEmit();
+            EffectEmitter.TimedEmit();
             CustomActivity();
         }
         public virtual void Destroy () 
         {
             FlatRedBall.SpriteManager.RemovePositionedObject(this);
             
-            if (TrailEmitter != null)
+            if (EffectEmitter != null)
             {
-                FlatRedBall.SpriteManager.RemoveEmitterOneWay(TrailEmitter);
+                FlatRedBall.SpriteManager.RemoveEmitterOneWay(EffectEmitter);
             }
             CustomDestroy();
         }
@@ -90,10 +90,10 @@ namespace GreasyPlatypusSlapper.Entities.Effects
         {
             bool oldShapeManagerSuppressAdd = FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue;
             FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = true;
-            if (TrailEmitter.Parent == null)
+            if (EffectEmitter.Parent == null)
             {
-                TrailEmitter.CopyAbsoluteToRelative();
-                TrailEmitter.AttachTo(this, false);
+                EffectEmitter.CopyAbsoluteToRelative();
+                EffectEmitter.AttachTo(this, false);
             }
             FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = oldShapeManagerSuppressAdd;
         }
@@ -104,9 +104,9 @@ namespace GreasyPlatypusSlapper.Entities.Effects
         public virtual void RemoveFromManagers () 
         {
             FlatRedBall.SpriteManager.ConvertToManuallyUpdated(this);
-            if (TrailEmitter != null)
+            if (EffectEmitter != null)
             {
-                FlatRedBall.SpriteManager.RemoveEmitterOneWay(TrailEmitter);
+                FlatRedBall.SpriteManager.RemoveEmitterOneWay(EffectEmitter);
             }
         }
         public virtual void AssignCustomVariables (bool callOnContainedElements) 
@@ -220,7 +220,7 @@ namespace GreasyPlatypusSlapper.Entities.Effects
         public virtual void SetToIgnorePausing () 
         {
             FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(this);
-            FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(TrailEmitter);
+            FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(EffectEmitter);
         }
         public virtual void MoveToLayer (FlatRedBall.Graphics.Layer layerToMoveTo) 
         {

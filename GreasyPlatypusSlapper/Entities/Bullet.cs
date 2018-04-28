@@ -24,7 +24,10 @@ namespace GreasyPlatypusSlapper.Entities
         /// </summary>
 		private void CustomInitialize()
 		{
-
+            if(DebugFeatureSettings.EnableRocketTrails)
+            {
+                MissileTrailInstance.Emitting = true;
+            }
 
 		}
 

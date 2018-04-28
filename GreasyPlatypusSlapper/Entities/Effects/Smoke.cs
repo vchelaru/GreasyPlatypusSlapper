@@ -8,12 +8,10 @@ using FlatRedBall.AI.Pathfinding;
 using FlatRedBall.Graphics.Animation;
 using FlatRedBall.Graphics.Particle;
 using FlatRedBall.Math.Geometry;
-using GreasyPlatypusSlapper.Utilities;
-using FlatRedBall.Math;
 
 namespace GreasyPlatypusSlapper.Entities.Effects
 {
-	public partial class MissileTrail
+	public partial class Smoke
 	{
         private SpriteList trails = new SpriteList();
 
@@ -31,19 +29,13 @@ namespace GreasyPlatypusSlapper.Entities.Effects
 
         private void CustomInitialize()
 		{
-            if (DebugFeatureSettings.EnableRocketTrails)
-            {
-                Setup();
-            }
-		}
+            Setup();
+        }
 
 		private void CustomActivity()
 		{
-            if(DebugFeatureSettings.EnableRocketTrails)
-            {
-                EmitTrails();
-            }
-		}
+            EmitTrails();
+        }
 
 		private void CustomDestroy()
 		{
@@ -65,7 +57,7 @@ namespace GreasyPlatypusSlapper.Entities.Effects
 
             // we have a new sprite, randomize the sprite
             // TODO: this doesn't actually work because vic lies
-            if(trails.Count > count)
+            if (trails.Count > count)
             {
                 trails.Last.CurrentFrameIndex = FlatRedBallServices.Random.Next(0, Particles["RocketTrails"].Count);
             }
@@ -81,7 +73,7 @@ namespace GreasyPlatypusSlapper.Entities.Effects
                 AlphaRate = -2,
                 Animate = false,
                 AnimationChains = Particles,
-                CurrentChainName = "RocketTrails",
+                CurrentChainName = "Smoke",
                 RotationZ = -3.14f,
                 RotationZRange = 6.28f,
                 TextureScale = 1f,
@@ -89,5 +81,5 @@ namespace GreasyPlatypusSlapper.Entities.Effects
                 ScaleYVelocity = 20f
             };
         }
-	}
+    }
 }

@@ -56,6 +56,10 @@
     <Compile Include="Entities\Effects\MissileTrail.Generated.cs">
       <DependentUpon>MissileTrail.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entities\Effects\Smoke.cs" />
+    <Compile Include="Entities\Effects\Smoke.Generated.cs">
+      <DependentUpon>smoke.cs</DependentUpon>
+    </Compile>
     <Compile Include="Entities\Effects\TreadEffect.cs" />
     <Compile Include="Entities\Effects\TreadEffect.Generated.cs">
       <DependentUpon>TreadEffect.cs</DependentUpon>
