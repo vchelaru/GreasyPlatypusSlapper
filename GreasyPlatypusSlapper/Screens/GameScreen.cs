@@ -80,7 +80,9 @@ namespace GreasyPlatypusSlapper.Screens
 
         private void CustomCollisionActivity()
         {
+            var isBoosting = roadVsTankRelationship.DoCollisions();
 
+            FlatRedBall.Debugging.Debugger.Write(isBoosting);
         }
 
         private void RestartActivity()
