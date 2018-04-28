@@ -42,6 +42,7 @@ namespace GreasyPlatypusSlapper.Entities
                 mCircleInstance = value;
             }
         }
+        private FlatRedBall.Sprite BulletShadow;
         public int Index { get; set; }
         public bool Used { get; set; }
         private FlatRedBall.Math.Geometry.ShapeCollection mGeneratedCollision;
@@ -74,6 +75,8 @@ namespace GreasyPlatypusSlapper.Entities
             SpriteInstance.Name = "SpriteInstance";
             mCircleInstance = new FlatRedBall.Math.Geometry.Circle();
             mCircleInstance.Name = "mCircleInstance";
+            BulletShadow = new FlatRedBall.Sprite();
+            BulletShadow.Name = "BulletShadow";
             
             PostInitialize();
             if (addToManagers)
@@ -87,6 +90,7 @@ namespace GreasyPlatypusSlapper.Entities
             FlatRedBall.SpriteManager.AddPositionedObject(this);
             FlatRedBall.SpriteManager.AddToLayer(SpriteInstance, LayerProvidedByContainer);
             FlatRedBall.Math.Geometry.ShapeManager.AddToLayer(mCircleInstance, LayerProvidedByContainer);
+            FlatRedBall.SpriteManager.AddToLayer(BulletShadow, LayerProvidedByContainer);
         }
         public virtual void AddToManagers (FlatRedBall.Graphics.Layer layerToAddTo) 
         {
@@ -94,6 +98,7 @@ namespace GreasyPlatypusSlapper.Entities
             FlatRedBall.SpriteManager.AddPositionedObject(this);
             FlatRedBall.SpriteManager.AddToLayer(SpriteInstance, LayerProvidedByContainer);
             FlatRedBall.Math.Geometry.ShapeManager.AddToLayer(mCircleInstance, LayerProvidedByContainer);
+            FlatRedBall.SpriteManager.AddToLayer(BulletShadow, LayerProvidedByContainer);
             AddToManagersBottomUp(layerToAddTo);
             CustomInitialize();
         }
@@ -118,6 +123,10 @@ namespace GreasyPlatypusSlapper.Entities
             {
                 FlatRedBall.Math.Geometry.ShapeManager.RemoveOneWay(CircleInstance);
             }
+            if (BulletShadow != null)
+            {
+                FlatRedBall.SpriteManager.RemoveSpriteOneWay(BulletShadow);
+            }
             mGeneratedCollision.RemoveFromManagers(clearThis: false);
             CustomDestroy();
         }
@@ -130,6 +139,14 @@ namespace GreasyPlatypusSlapper.Entities
                 SpriteInstance.CopyAbsoluteToRelative();
                 SpriteInstance.AttachTo(this, false);
             }
+            if (SpriteInstance.Parent == null)
+            {
+                SpriteInstance.Z = 2f;
+            }
+            else
+            {
+                SpriteInstance.RelativeZ = 2f;
+            }
             SpriteInstance.TextureScale = 1f;
             SpriteInstance.AnimationChains = AnimationChainListFile;
             SpriteInstance.CurrentChainName = "OrangeMissile";
@@ -139,6 +156,41 @@ namespace GreasyPlatypusSlapper.Entities
                 mCircleInstance.AttachTo(this, false);
             }
             CircleInstance.Radius = 3f;
+            CircleInstance.Visible = false;
+            if (BulletShadow.Parent == null)
+            {
+                BulletShadow.CopyAbsoluteToRelative();
+                BulletShadow.AttachTo(this, false);
+            }
+            if (BulletShadow.Parent == null)
+            {
+                BulletShadow.X = 10f;
+            }
+            else
+            {
+                BulletShadow.RelativeX = 10f;
+            }
+            if (BulletShadow.Parent == null)
+            {
+                BulletShadow.Y = -10f;
+            }
+            else
+            {
+                BulletShadow.RelativeY = -10f;
+            }
+            if (BulletShadow.Parent == null)
+            {
+                BulletShadow.Z = 0.1f;
+            }
+            else
+            {
+                BulletShadow.RelativeZ = 0.1f;
+            }
+            BulletShadow.TextureScale = 1f;
+            BulletShadow.UseAnimationRelativePosition = false;
+            BulletShadow.AnimationChains = AnimationChainListFile;
+            BulletShadow.CurrentChainName = "MissileShadow";
+            BulletShadow.ParentRotationChangesPosition = false;
             mGeneratedCollision = new FlatRedBall.Math.Geometry.ShapeCollection();
             mGeneratedCollision.Circles.AddOneWay(mCircleInstance);
             FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = oldShapeManagerSuppressAdd;
@@ -158,6 +210,10 @@ namespace GreasyPlatypusSlapper.Entities
             {
                 FlatRedBall.Math.Geometry.ShapeManager.RemoveOneWay(CircleInstance);
             }
+            if (BulletShadow != null)
+            {
+                FlatRedBall.SpriteManager.RemoveSpriteOneWay(BulletShadow);
+            }
             mGeneratedCollision.RemoveFromManagers(clearThis: false);
         }
         public virtual void AssignCustomVariables (bool callOnContainedElements) 
@@ -165,16 +221,55 @@ namespace GreasyPlatypusSlapper.Entities
             if (callOnContainedElements)
             {
             }
+            if (SpriteInstance.Parent == null)
+            {
+                SpriteInstance.Z = 2f;
+            }
+            else
+            {
+                SpriteInstance.RelativeZ = 2f;
+            }
             SpriteInstance.TextureScale = 1f;
             SpriteInstance.AnimationChains = AnimationChainListFile;
             SpriteInstance.CurrentChainName = "OrangeMissile";
             CircleInstance.Radius = 3f;
+            CircleInstance.Visible = false;
+            if (BulletShadow.Parent == null)
+            {
+                BulletShadow.X = 10f;
+            }
+            else
+            {
+                BulletShadow.RelativeX = 10f;
+            }
+            if (BulletShadow.Parent == null)
+            {
+                BulletShadow.Y = -10f;
+            }
+            else
+            {
+                BulletShadow.RelativeY = -10f;
+            }
+            if (BulletShadow.Parent == null)
+            {
+                BulletShadow.Z = 0.1f;
+            }
+            else
+            {
+                BulletShadow.RelativeZ = 0.1f;
+            }
+            BulletShadow.TextureScale = 1f;
+            BulletShadow.UseAnimationRelativePosition = false;
+            BulletShadow.AnimationChains = AnimationChainListFile;
+            BulletShadow.CurrentChainName = "MissileShadow";
+            BulletShadow.ParentRotationChangesPosition = false;
         }
         public virtual void ConvertToManuallyUpdated () 
         {
             this.ForceUpdateDependenciesDeep();
             FlatRedBall.SpriteManager.ConvertToManuallyUpdated(this);
             FlatRedBall.SpriteManager.ConvertToManuallyUpdated(SpriteInstance);
+            FlatRedBall.SpriteManager.ConvertToManuallyUpdated(BulletShadow);
         }
         public static void LoadStaticContent (string contentManagerName) 
         {
@@ -278,6 +373,7 @@ namespace GreasyPlatypusSlapper.Entities
             FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(this);
             FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(SpriteInstance);
             FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(CircleInstance);
+            FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(BulletShadow);
         }
         public virtual void MoveToLayer (FlatRedBall.Graphics.Layer layerToMoveTo) 
         {
@@ -292,6 +388,11 @@ namespace GreasyPlatypusSlapper.Entities
                 layerToRemoveFrom.Remove(CircleInstance);
             }
             FlatRedBall.Math.Geometry.ShapeManager.AddToLayer(CircleInstance, layerToMoveTo);
+            if (layerToRemoveFrom != null)
+            {
+                layerToRemoveFrom.Remove(BulletShadow);
+            }
+            FlatRedBall.SpriteManager.AddToLayer(BulletShadow, layerToMoveTo);
             LayerProvidedByContainer = layerToMoveTo;
         }
     }
