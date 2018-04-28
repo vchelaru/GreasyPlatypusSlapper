@@ -201,11 +201,11 @@ namespace GreasyPlatypusSlapper.Entities
             }
             if (TurretInstance.Parent == null)
             {
-                TurretInstance.X = 3.5f;
+                TurretInstance.X = 0f;
             }
             else
             {
-                TurretInstance.RelativeX = 3.5f;
+                TurretInstance.RelativeX = 0f;
             }
             if (TurretInstance.Parent == null)
             {
@@ -319,11 +319,11 @@ namespace GreasyPlatypusSlapper.Entities
             CircleInstance.Visible = false;
             if (TurretInstance.Parent == null)
             {
-                TurretInstance.X = 3.5f;
+                TurretInstance.X = 0f;
             }
             else
             {
-                TurretInstance.RelativeX = 3.5f;
+                TurretInstance.RelativeX = 0f;
             }
             if (TurretInstance.Parent == null)
             {

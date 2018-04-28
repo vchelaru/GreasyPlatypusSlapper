@@ -156,20 +156,44 @@ namespace GreasyPlatypusSlapper.Entities
 
         private void ApplyTurretAiming()
         {
-            if(aimingInput?.Magnitude > .2f)
+            if (DebugFeatureSettings.EnableTurnBasedMovement)
+            {
+                ApplyTurnBasedTurretAiming();
+            }
+            else
+            {
+                ApplyAbsoluteBasedTurretAiming();
+            }
+        }
+
+        private void ApplyAbsoluteBasedTurretAiming()
+        {
+            const int rotationSpeed = 3;
+
+            if (aimingInput?.Magnitude > .2f)
             {
                 var desiredDirection = aimingInput.GetAngle().Value;
 
                 var direction = Math.Sign(FlatRedBall.Math.MathFunctions.AngleToAngle(TurretInstance.RotationZ, desiredDirection));
 
-                var rotationSpeed = 3;
                 TurretInstance.RelativeRotationZVelocity = direction * rotationSpeed;
-
             }
             else
             {
                 TurretInstance.RelativeRotationZVelocity = 0;
             }
+        }
+
+        private void ApplyTurnBasedTurretAiming()
+        {
+            System.Diagnostics.Debug.WriteLine("Turn!");
+
+            var rotationVelocity = 0f;
+            if (aimingInput?.Magnitude > .2f)
+            {
+                rotationVelocity = aimingInput?.X ?? rotationVelocity;
+            }
+            TurretInstance.RelativeRotationZVelocity = rotationVelocity;
         }
 
         private void ShootingActivity()
