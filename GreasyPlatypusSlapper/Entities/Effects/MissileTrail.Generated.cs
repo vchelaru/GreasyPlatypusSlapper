@@ -13,9 +13,10 @@ using FlatRedBall.Screens;
 using System;
 using System.Collections.Generic;
 using System.Text;
-namespace GreasyPlatypusSlapper.Entities
+using FlatRedBall.Graphics.Particle;
+namespace GreasyPlatypusSlapper.Entities.Effects
 {
-    public partial class DebugFeatureSettings : FlatRedBall.PositionedObject, FlatRedBall.Graphics.IDestroyable
+    public partial class MissileTrail : FlatRedBall.PositionedObject, FlatRedBall.Graphics.IDestroyable
     {
         // This is made static so that static lazy-loaded content can access it.
         public static string ContentManagerName { get; set; }
@@ -25,22 +26,19 @@ namespace GreasyPlatypusSlapper.Entities
         static object mLockObject = new object();
         static System.Collections.Generic.List<string> mRegisteredUnloads = new System.Collections.Generic.List<string>();
         static System.Collections.Generic.List<string> LoadedContentManagers = new System.Collections.Generic.List<string>();
+        protected static FlatRedBall.Graphics.Animation.AnimationChainList Particles;
         
-        public static bool EnableTankTreads = true;
-        public static bool EnableRocketTrails = true;
-        public static bool EnableTurnBasedMovement = false;
-        public static bool EnableBoost = false;
-        public static bool EnableSmokeOnLowHealth = true;
+        private FlatRedBall.Graphics.Particle.Emitter EffectEmitter;
         protected FlatRedBall.Graphics.Layer LayerProvidedByContainer = null;
-        public DebugFeatureSettings () 
+        public MissileTrail () 
         	: this(FlatRedBall.Screens.ScreenManager.CurrentScreen.ContentManagerName, true)
         {
         }
-        public DebugFeatureSettings (string contentManagerName) 
+        public MissileTrail (string contentManagerName) 
         	: this(contentManagerName, true)
         {
         }
-        public DebugFeatureSettings (string contentManagerName, bool addToManagers) 
+        public MissileTrail (string contentManagerName, bool addToManagers) 
         	: base()
         {
             ContentManagerName = contentManagerName;
@@ -49,6 +47,8 @@ namespace GreasyPlatypusSlapper.Entities
         protected virtual void InitializeEntity (bool addToManagers) 
         {
             LoadStaticContent(ContentManagerName);
+            EffectEmitter = new FlatRedBall.Graphics.Particle.Emitter();
+            EffectEmitter.Name = "EffectEmitter";
             
             PostInitialize();
             if (addToManagers)
@@ -60,29 +60,41 @@ namespace GreasyPlatypusSlapper.Entities
         {
             LayerProvidedByContainer = layerToAddTo;
             FlatRedBall.SpriteManager.AddPositionedObject(this);
+            FlatRedBall.SpriteManager.AddEmitter(EffectEmitter, LayerProvidedByContainer);
         }
         public virtual void AddToManagers (FlatRedBall.Graphics.Layer layerToAddTo) 
         {
             LayerProvidedByContainer = layerToAddTo;
             FlatRedBall.SpriteManager.AddPositionedObject(this);
+            FlatRedBall.SpriteManager.AddEmitter(EffectEmitter, LayerProvidedByContainer);
             AddToManagersBottomUp(layerToAddTo);
             CustomInitialize();
         }
         public virtual void Activity () 
         {
             
+            EffectEmitter.TimedEmit();
             CustomActivity();
         }
         public virtual void Destroy () 
         {
             FlatRedBall.SpriteManager.RemovePositionedObject(this);
             
+            if (EffectEmitter != null)
+            {
+                FlatRedBall.SpriteManager.RemoveEmitterOneWay(EffectEmitter);
+            }
             CustomDestroy();
         }
         public virtual void PostInitialize () 
         {
             bool oldShapeManagerSuppressAdd = FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue;
             FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = true;
+            if (EffectEmitter.Parent == null)
+            {
+                EffectEmitter.CopyAbsoluteToRelative();
+                EffectEmitter.AttachTo(this, false);
+            }
             FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = oldShapeManagerSuppressAdd;
         }
         public virtual void AddToManagersBottomUp (FlatRedBall.Graphics.Layer layerToAddTo) 
@@ -92,6 +104,10 @@ namespace GreasyPlatypusSlapper.Entities
         public virtual void RemoveFromManagers () 
         {
             FlatRedBall.SpriteManager.ConvertToManuallyUpdated(this);
+            if (EffectEmitter != null)
+            {
+                FlatRedBall.SpriteManager.RemoveEmitterOneWay(EffectEmitter);
+            }
         }
         public virtual void AssignCustomVariables (bool callOnContainedElements) 
         {
@@ -129,10 +145,15 @@ namespace GreasyPlatypusSlapper.Entities
                 {
                     if (!mRegisteredUnloads.Contains(ContentManagerName) && ContentManagerName != FlatRedBall.FlatRedBallServices.GlobalContentManager)
                     {
-                        FlatRedBall.FlatRedBallServices.GetContentManagerByName(ContentManagerName).AddUnloadMethod("DebugFeatureSettingsStaticUnload", UnloadStaticContent);
+                        FlatRedBall.FlatRedBallServices.GetContentManagerByName(ContentManagerName).AddUnloadMethod("MissileTrailStaticUnload", UnloadStaticContent);
                         mRegisteredUnloads.Add(ContentManagerName);
                     }
                 }
+                if (!FlatRedBall.FlatRedBallServices.IsLoaded<FlatRedBall.Graphics.Animation.AnimationChainList>(@"content/globalcontent/particles.achx", ContentManagerName))
+                {
+                    registerUnload = true;
+                }
+                Particles = FlatRedBall.FlatRedBallServices.Load<FlatRedBall.Graphics.Animation.AnimationChainList>(@"content/globalcontent/particles.achx", ContentManagerName);
             }
             if (registerUnload && ContentManagerName != FlatRedBall.FlatRedBallServices.GlobalContentManager)
             {
@@ -140,7 +161,7 @@ namespace GreasyPlatypusSlapper.Entities
                 {
                     if (!mRegisteredUnloads.Contains(ContentManagerName) && ContentManagerName != FlatRedBall.FlatRedBallServices.GlobalContentManager)
                     {
-                        FlatRedBall.FlatRedBallServices.GetContentManagerByName(ContentManagerName).AddUnloadMethod("DebugFeatureSettingsStaticUnload", UnloadStaticContent);
+                        FlatRedBall.FlatRedBallServices.GetContentManagerByName(ContentManagerName).AddUnloadMethod("MissileTrailStaticUnload", UnloadStaticContent);
                         mRegisteredUnloads.Add(ContentManagerName);
                     }
                 }
@@ -156,19 +177,38 @@ namespace GreasyPlatypusSlapper.Entities
             }
             if (LoadedContentManagers.Count == 0)
             {
+                if (Particles != null)
+                {
+                    Particles= null;
+                }
             }
         }
         [System.Obsolete("Use GetFile instead")]
         public static object GetStaticMember (string memberName) 
         {
+            switch(memberName)
+            {
+                case  "Particles":
+                    return Particles;
+            }
             return null;
         }
         public static object GetFile (string memberName) 
         {
+            switch(memberName)
+            {
+                case  "Particles":
+                    return Particles;
+            }
             return null;
         }
         object GetMember (string memberName) 
         {
+            switch(memberName)
+            {
+                case  "Particles":
+                    return Particles;
+            }
             return null;
         }
         protected bool mIsPaused;
@@ -180,6 +220,7 @@ namespace GreasyPlatypusSlapper.Entities
         public virtual void SetToIgnorePausing () 
         {
             FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(this);
+            FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(EffectEmitter);
         }
         public virtual void MoveToLayer (FlatRedBall.Graphics.Layer layerToMoveTo) 
         {

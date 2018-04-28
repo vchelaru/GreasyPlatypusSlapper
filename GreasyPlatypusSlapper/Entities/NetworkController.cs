@@ -11,12 +11,8 @@ using FlatRedBall.Math.Geometry;
 
 namespace GreasyPlatypusSlapper.Entities
 {
-	public partial class Bullet
+	public partial class NetworkController
 	{
-
-        public int TeamIndex { get; set; }
-
-
         /// <summary>
         /// Initialization logic which is execute only one time for this Entity (unless the Entity is pooled).
         /// This method is called when the Entity is added to managers. Entities which are instantiated but not
@@ -24,10 +20,7 @@ namespace GreasyPlatypusSlapper.Entities
         /// </summary>
 		private void CustomInitialize()
 		{
-            if(DebugFeatureSettings.EnableRocketTrails)
-            {
-                MissileTrailInstance.Emitting = true;
-            }
+
 
 		}
 

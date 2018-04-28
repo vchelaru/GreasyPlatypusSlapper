@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <objecttypes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <objecttype name="Bullet" />
+  <objecttype name="Bullet">
+    <property name="Damage" type="float" default="25" />
+  </objecttype>
   <objecttype name="TreadEffect">
     <property name="AlphaRate" type="float" default="-0.15" />
   </objecttype>

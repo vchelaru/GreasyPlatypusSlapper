@@ -52,9 +52,21 @@
     <Compile Include="Entities\DebugFeatureSettings.Generated.cs">
       <DependentUpon>DebugFeatureSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entities\Effects\MissileTrail.cs" />
+    <Compile Include="Entities\Effects\MissileTrail.Generated.cs">
+      <DependentUpon>MissileTrail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Effects\Smoke.cs" />
+    <Compile Include="Entities\Effects\Smoke.Generated.cs">
+      <DependentUpon>Smoke.cs</DependentUpon>
+    </Compile>
     <Compile Include="Entities\Effects\TreadEffect.cs" />
     <Compile Include="Entities\Effects\TreadEffect.Generated.cs">
       <DependentUpon>TreadEffect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\NetworkController.cs" />
+    <Compile Include="Entities\NetworkController.Generated.cs">
+      <DependentUpon>NetworkController.cs</DependentUpon>
     </Compile>
     <Compile Include="Entities\Tank.cs" />
     <Compile Include="Entities\Tank.Generated.cs">
@@ -105,6 +117,7 @@
     <Compile Include="TileGraphics\TileNodeNetworkCreator.cs" />
     <Compile Include="TileGraphics\Tileset.cs" />
     <Compile Include="TileGraphics\TilesetExtensionMethods.cs" />
+    <Compile Include="Utilities\MathUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FlatRedBall.Forms, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -227,7 +240,12 @@
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\RedGrin\RedGrin.csproj">
+      <Project>{9A4FD6E3-7795-4C93-B670-7BE2C3DC8639}</Project>
+      <Name>RedGrin</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

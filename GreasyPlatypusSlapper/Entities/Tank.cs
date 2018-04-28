@@ -10,6 +10,7 @@ using FlatRedBall.Graphics.Particle;
 using FlatRedBall.Math.Geometry;
 using Microsoft.Xna.Framework;
 using GreasyPlatypusSlapper.Factories;
+using Microsoft.Xna.Framework.Input;
 
 namespace GreasyPlatypusSlapper.Entities
 {
@@ -21,6 +22,10 @@ namespace GreasyPlatypusSlapper.Entities
         I2DInput aimingInput;
         IPressableInput shootingInput;
         double lastTreadTime;
+        float currentHealth;
+	    IPressableInput boostInput;
+	    double lastBoostTime;
+		float activeBoostModifier;
 
         public int TeamIndex { get; set; }
         public float CurrentSpeed
@@ -28,6 +33,13 @@ namespace GreasyPlatypusSlapper.Entities
             get
             {
                 return Velocity.Length();
+            }
+        }
+        public float CurrentHealthPercent
+        {
+            get
+            {
+                return currentHealth / MaxHealth;
             }
         }
 
@@ -39,7 +51,23 @@ namespace GreasyPlatypusSlapper.Entities
 		private void CustomInitialize()
 		{
             this.TurretInstance.ParentRotationChangesRotation = false;
+			lastBoostTime = 0 - BoostDurationInSeconds - BoostTimeoutInSeconds; // so we don't start boosted
+            currentHealth = MaxHealth;
+            this.TurretInstance.ParentRotationChangesRotation = false;
 		}
+
+        public void ApplyDamage(float amount)
+        {
+            // only apply damage if we are healthy
+            if(currentHealth > 0)
+            {
+                currentHealth -= amount;
+                if (currentHealth <= 0)
+                {
+                    Die();
+                }
+            }
+        }
 
         public void AssignDefaultInput()
         {
@@ -55,10 +83,24 @@ namespace GreasyPlatypusSlapper.Entities
                 Microsoft.Xna.Framework.Input.Keys.Down);
 
             shootingInput = keyboard.GetKey(Microsoft.Xna.Framework.Input.Keys.Space);
+
+            if (DebugFeatureSettings.EnableBoost)
+            {
+                boostInput = keyboard.GetKey(Keys.Q);
+            }
+        }
+
+        public void Die()
+        {
+            // TODO: play effects
+
+            Destroy();
         }
 
         private void CustomActivity()
 		{
+			CalculateBoostModifier();
+
             ApplyMovement();
 
             ApplyTurretAiming();
@@ -69,29 +111,46 @@ namespace GreasyPlatypusSlapper.Entities
             {
                 TankTreadActivity();
             }
+
+            if(DebugFeatureSettings.EnableSmokeOnLowHealth)
+            {
+                SmokeInstance.Emitting = CurrentHealthPercent < LowHealthThreshold;
+            }
             
 		}
 
         private void ApplyMovement()
         {
-            if(movementInput?.Magnitude > .2f)
+            if (DebugFeatureSettings.EnableTurnBasedMovement)
             {
-                var desiredDirection = movementInput.GetAngle().Value;
-
-                var direction = Math.Sign(FlatRedBall.Math.MathFunctions.AngleToAngle(RotationZ, desiredDirection));
-
-                var rotationSpeed = 3;
-                var forwardSpeed = 100;
-
-                this.RotationZVelocity = direction * rotationSpeed;
-
-                this.Velocity = this.RotationMatrix.Right * forwardSpeed;
+                ApplyTurnBasedMovement();
             }
             else
             {
-                this.Velocity = Vector3.Zero;
-                this.RotationZVelocity = 0;
+                if(movementInput?.Magnitude > .2f)
+                {
+                    var desiredDirection = movementInput.GetAngle().Value;
+
+                    var direction = Math.Sign(FlatRedBall.Math.MathFunctions.AngleToAngle(RotationZ, desiredDirection));
+
+                    var rotationSpeed = 3;
+                    var forwardSpeed = 100;
+
+                    this.RotationZVelocity = direction * rotationSpeed;
+
+                    this.Velocity = this.RotationMatrix.Right * forwardSpeed;
+                }
+                else
+                {
+                    this.Velocity = Vector3.Zero;
+                    this.RotationZVelocity = 0;
+                }
             }
+
+	        if (activeBoostModifier > 0)
+	        {
+		        Velocity *= activeBoostModifier;
+	        }
         }
 
         private void ApplyTurretAiming()
@@ -141,6 +200,58 @@ namespace GreasyPlatypusSlapper.Entities
 
         }
 
+	    private void ApplyTurnBasedMovement()
+	    {
+	        // copied from previous movement
+	        const int rotationSpeed = 3;
+	        const int forwardSpeed = 100;
+
+		    var forwardVelocity = 0f;
+		    var rotationVelocity = 0f;
+
+		    if (movementInput?.Magnitude > .2f)
+		    {
+			    forwardVelocity = forwardSpeed * movementInput.Y;
+			    rotationVelocity = rotationSpeed * movementInput.X;
+		    }
+
+		    RotationZVelocity = rotationVelocity;
+		    Velocity = RotationMatrix.Right * forwardVelocity;
+	    }
+
+	    private void CalculateBoostModifier()
+	    {
+		    if (!DebugFeatureSettings.EnableBoost)
+		    {
+			    return;
+		    }
+
+		    var timeUntilNextBoost = lastBoostTime + BoostDurationInSeconds + BoostTimeoutInSeconds;
+
+		    // Allow a fresh boost if timeout is over
+		    if (boostInput?.WasJustPressed == true && timeUntilNextBoost < TimeManager.CurrentTime)
+		    {
+			    lastBoostTime = TimeManager.CurrentTime;
+		    }
+
+		    var timeSinceBoost = TimeManager.CurrentTime - lastBoostTime;
+	        var isInBoost = timeSinceBoost < BoostDurationInSeconds;
+		    var isInPenalty = !isInBoost &&
+		                       timeSinceBoost < BoostDurationInSeconds + BoostPenaltyDurationInSeconds;
+
+		    if (isInBoost)
+		    {
+			    activeBoostModifier = BoostSpeedMultiplier;
+		    }
+		    else if (isInPenalty)
+		    {
+			    activeBoostModifier = BoostPenaltySpeedMultiplier;
+		    }
+		    else
+		    {
+			    activeBoostModifier = 0;
+		    }
+	    }
 
         private void CustomDestroy()
 		{
