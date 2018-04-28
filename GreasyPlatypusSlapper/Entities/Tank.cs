@@ -10,6 +10,7 @@ using FlatRedBall.Graphics.Particle;
 using FlatRedBall.Math.Geometry;
 using Microsoft.Xna.Framework;
 using GreasyPlatypusSlapper.Factories;
+using Microsoft.Xna.Framework.Input;
 
 namespace GreasyPlatypusSlapper.Entities
 {
@@ -74,23 +75,30 @@ namespace GreasyPlatypusSlapper.Entities
 
         private void ApplyMovement()
         {
-            if(movementInput?.Magnitude > .2f)
+            if (DebugFeatureSettings.EnableTurnBasedMovement)
             {
-                var desiredDirection = movementInput.GetAngle().Value;
-
-                var direction = Math.Sign(FlatRedBall.Math.MathFunctions.AngleToAngle(RotationZ, desiredDirection));
-
-                var rotationSpeed = 3;
-                var forwardSpeed = 100;
-
-                this.RotationZVelocity = direction * rotationSpeed;
-
-                this.Velocity = this.RotationMatrix.Right * forwardSpeed;
+                ApplyTurnBasedMovement();
             }
             else
             {
-                this.Velocity = Vector3.Zero;
-                this.RotationZVelocity = 0;
+                if(movementInput?.Magnitude > .2f)
+                {
+                    var desiredDirection = movementInput.GetAngle().Value;
+
+                    var direction = Math.Sign(FlatRedBall.Math.MathFunctions.AngleToAngle(RotationZ, desiredDirection));
+
+                    var rotationSpeed = 3;
+                    var forwardSpeed = 100;
+
+                    this.RotationZVelocity = direction * rotationSpeed;
+
+                    this.Velocity = this.RotationMatrix.Right * forwardSpeed;
+                }
+                else
+                {
+                    this.Velocity = Vector3.Zero;
+                    this.RotationZVelocity = 0;
+                }
             }
         }
 
@@ -140,6 +148,25 @@ namespace GreasyPlatypusSlapper.Entities
             }
 
         }
+
+	    private void ApplyTurnBasedMovement()
+	    {
+	        // copied from previous movement
+	        const int rotationSpeed = 3;
+	        const int forwardSpeed = 100;
+
+		    var forwardVelocity = 0f;
+		    var rotationVelocity = 0f;
+
+		    if (movementInput?.Magnitude > .2f)
+		    {
+			    forwardVelocity = forwardSpeed * movementInput.Y;
+			    rotationVelocity = rotationSpeed * movementInput.X;
+		    }
+
+		    RotationZVelocity = rotationVelocity;
+		    Velocity = RotationMatrix.Right * forwardVelocity;
+	    }
 
 
         private void CustomDestroy()

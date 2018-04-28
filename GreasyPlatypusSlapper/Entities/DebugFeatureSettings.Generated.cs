@@ -27,6 +27,7 @@ namespace GreasyPlatypusSlapper.Entities
         static System.Collections.Generic.List<string> LoadedContentManagers = new System.Collections.Generic.List<string>();
         
         public static bool EnableTankTreads = true;
+        public static bool EnableTurnBasedMovement = false;
         protected FlatRedBall.Graphics.Layer LayerProvidedByContainer = null;
         public DebugFeatureSettings () 
         	: this(FlatRedBall.Screens.ScreenManager.CurrentScreen.ContentManagerName, true)
