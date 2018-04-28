@@ -48,6 +48,14 @@
     <Compile Include="Entities\CameraEntity.Generated.cs">
       <DependentUpon>CameraEntity.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entities\DebugFeatureSettings.cs" />
+    <Compile Include="Entities\DebugFeatureSettings.Generated.cs">
+      <DependentUpon>DebugFeatureSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Effects\TreadEffect.cs" />
+    <Compile Include="Entities\Effects\TreadEffect.Generated.cs">
+      <DependentUpon>TreadEffect.cs</DependentUpon>
+    </Compile>
     <Compile Include="Entities\Tank.cs" />
     <Compile Include="Entities\Tank.Generated.cs">
       <DependentUpon>Tank.cs</DependentUpon>
@@ -57,6 +65,7 @@
       <DependentUpon>Turret.cs</DependentUpon>
     </Compile>
     <Compile Include="Factories\BulletFactory.Generated.cs" />
+    <Compile Include="Factories\TreadEffectFactory.Generated.cs" />
     <Compile Include="FileAliases.Generated.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GlobalContent.Generated.cs" />
@@ -141,6 +150,10 @@
     <None Include="content\entities\turret\animationchainlistfile.achx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>AnimationChainListFile</Name>
+    </None>
+    <None Include="content\globalcontent\particles.achx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Particles</Name>
     </None>
     <None Include="content\globalcontent\spritesheet.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

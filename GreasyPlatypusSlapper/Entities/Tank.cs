@@ -9,6 +9,7 @@ using FlatRedBall.Graphics.Animation;
 using FlatRedBall.Graphics.Particle;
 using FlatRedBall.Math.Geometry;
 using Microsoft.Xna.Framework;
+using GreasyPlatypusSlapper.Factories;
 
 namespace GreasyPlatypusSlapper.Entities
 {
@@ -19,8 +20,16 @@ namespace GreasyPlatypusSlapper.Entities
         I2DInput movementInput;
         I2DInput aimingInput;
         IPressableInput shootingInput;
+        double lastTreadTime;
 
         public int TeamIndex { get; set; }
+        public float CurrentSpeed
+        {
+            get
+            {
+                return Velocity.Length();
+            }
+        }
 
         /// <summary>
         /// Initialization logic which is execute only one time for this Entity (unless the Entity is pooled).
@@ -56,6 +65,11 @@ namespace GreasyPlatypusSlapper.Entities
 
             ShootingActivity();
 
+            if(DebugFeatureSettings.EnableTankTreads)
+            {
+                TankTreadActivity();
+            }
+            
 		}
 
         private void ApplyMovement()
@@ -111,6 +125,20 @@ namespace GreasyPlatypusSlapper.Entities
                 var BulletSpeed = 500;
                 bullet.Velocity = TurretInstance.RotationMatrix.Right * BulletSpeed;
             }
+        }
+
+        private void TankTreadActivity()
+        {
+            var timeSinceLastTread = TimeManager.CurrentTime - lastTreadTime;
+            var distSinceLastTread = CurrentSpeed * timeSinceLastTread;
+
+            if(distSinceLastTread >= TreadSpacing)
+            {
+                var tread = TreadEffectFactory.CreateNew(Position.X, Position.Y);
+                tread.RotationZ = RotationZ;
+                lastTreadTime = TimeManager.CurrentTime;
+            }
+
         }
 
 

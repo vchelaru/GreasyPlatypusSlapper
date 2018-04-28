@@ -3,6 +3,7 @@
 #endif
 using Color = Microsoft.Xna.Framework.Color;
 using GreasyPlatypusSlapper.Entities;
+using GreasyPlatypusSlapper.Entities.Effects;
 using GreasyPlatypusSlapper.Factories;
 using FlatRedBall;
 using FlatRedBall.Screens;
@@ -24,6 +25,7 @@ namespace GreasyPlatypusSlapper.Screens
         private GreasyPlatypusSlapper.Entities.Tank Tank2Test;
         private FlatRedBall.Math.PositionedObjectList<GreasyPlatypusSlapper.Entities.Bullet> BulletList;
         private GreasyPlatypusSlapper.Entities.CameraEntity CameraEntityInstance;
+        private FlatRedBall.Math.PositionedObjectList<GreasyPlatypusSlapper.Entities.Effects.TreadEffect> TreadEffects;
         public GameScreen () 
         	: base ("GameScreen")
         {
@@ -41,6 +43,8 @@ namespace GreasyPlatypusSlapper.Screens
             BulletList.Name = "BulletList";
             CameraEntityInstance = new GreasyPlatypusSlapper.Entities.CameraEntity(ContentManagerName, false);
             CameraEntityInstance.Name = "CameraEntityInstance";
+            TreadEffects = new FlatRedBall.Math.PositionedObjectList<GreasyPlatypusSlapper.Entities.Effects.TreadEffect>();
+            TreadEffects.Name = "TreadEffects";
             
             
             PostInitialize();
@@ -54,7 +58,9 @@ namespace GreasyPlatypusSlapper.Screens
         {
             TestLevel.AddToManagers(mLayer);
             Factories.BulletFactory.Initialize(ContentManagerName);
+            Factories.TreadEffectFactory.Initialize(ContentManagerName);
             Factories.BulletFactory.AddList(BulletList);
+            Factories.TreadEffectFactory.AddList(TreadEffects);
             Tank1Test.AddToManagers(mLayer);
             Tank2Test.AddToManagers(mLayer);
             CameraEntityInstance.AddToManagers(mLayer);
@@ -84,6 +90,14 @@ namespace GreasyPlatypusSlapper.Screens
                     }
                 }
                 CameraEntityInstance.Activity();
+                for (int i = TreadEffects.Count - 1; i > -1; i--)
+                {
+                    if (i < TreadEffects.Count)
+                    {
+                        // We do the extra if-check because activity could destroy any number of entities
+                        TreadEffects[i].Activity();
+                    }
+                }
             }
             else
             {
@@ -98,11 +112,13 @@ namespace GreasyPlatypusSlapper.Screens
         {
             base.Destroy();
             Factories.BulletFactory.Destroy();
+            Factories.TreadEffectFactory.Destroy();
             TestLevel.Destroy();
             TestLevel = null;
             
             TankList.MakeOneWay();
             BulletList.MakeOneWay();
+            TreadEffects.MakeOneWay();
             for (int i = TankList.Count - 1; i > -1; i--)
             {
                 TankList[i].Destroy();
@@ -116,8 +132,13 @@ namespace GreasyPlatypusSlapper.Screens
                 CameraEntityInstance.Destroy();
                 CameraEntityInstance.Detach();
             }
+            for (int i = TreadEffects.Count - 1; i > -1; i--)
+            {
+                TreadEffects[i].Destroy();
+            }
             TankList.MakeTwoWay();
             BulletList.MakeTwoWay();
+            TreadEffects.MakeTwoWay();
             FlatRedBall.Math.Collision.CollisionManager.Self.Relationships.Clear();
             CustomDestroy();
         }
@@ -194,6 +215,10 @@ namespace GreasyPlatypusSlapper.Screens
                 BulletList[i].Destroy();
             }
             CameraEntityInstance.RemoveFromManagers();
+            for (int i = TreadEffects.Count - 1; i > -1; i--)
+            {
+                TreadEffects[i].Destroy();
+            }
         }
         public virtual void AssignCustomVariables (bool callOnContainedElements) 
         {
@@ -264,6 +289,10 @@ namespace GreasyPlatypusSlapper.Screens
                 BulletList[i].ConvertToManuallyUpdated();
             }
             CameraEntityInstance.ConvertToManuallyUpdated();
+            for (int i = 0; i < TreadEffects.Count; i++)
+            {
+                TreadEffects[i].ConvertToManuallyUpdated();
+            }
         }
         public static void LoadStaticContent (string contentManagerName) 
         {

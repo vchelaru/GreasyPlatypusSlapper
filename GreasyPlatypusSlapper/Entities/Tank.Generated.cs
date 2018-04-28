@@ -6,6 +6,7 @@ using GreasyPlatypusSlapper.Screens;
 using FlatRedBall.Graphics;
 using FlatRedBall.Math;
 using GreasyPlatypusSlapper.Entities;
+using GreasyPlatypusSlapper.Entities.Effects;
 using GreasyPlatypusSlapper.Factories;
 using FlatRedBall;
 using FlatRedBall.Screens;
@@ -55,6 +56,7 @@ namespace GreasyPlatypusSlapper.Entities
         public float DefaultSpeed = 100f;
         public float MudSpeed = 50f;
         public float RoadSpeed = 200f;
+        public float TreadSpacing = 5f;
         private FlatRedBall.Math.Geometry.ShapeCollection mGeneratedCollision;
         public FlatRedBall.Math.Geometry.ShapeCollection Collision
         {
@@ -229,6 +231,7 @@ namespace GreasyPlatypusSlapper.Entities
             DefaultSpeed = 100f;
             MudSpeed = 50f;
             RoadSpeed = 200f;
+            TreadSpacing = 5f;
         }
         public virtual void ConvertToManuallyUpdated () 
         {

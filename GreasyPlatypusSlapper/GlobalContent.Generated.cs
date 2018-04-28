@@ -20,6 +20,7 @@ namespace GreasyPlatypusSlapper
     {
         
         public static Microsoft.Xna.Framework.Graphics.Texture2D spriteSheet { get; set; }
+        public static FlatRedBall.Graphics.Animation.AnimationChainList Particles { get; set; }
         [System.Obsolete("Use GetFile instead")]
         public static object GetStaticMember (string memberName) 
         {
@@ -27,6 +28,8 @@ namespace GreasyPlatypusSlapper
             {
                 case  "spriteSheet":
                     return spriteSheet;
+                case  "Particles":
+                    return Particles;
             }
             return null;
         }
@@ -36,6 +39,8 @@ namespace GreasyPlatypusSlapper
             {
                 case  "spriteSheet":
                     return spriteSheet;
+                case  "Particles":
+                    return Particles;
             }
             return null;
         }
@@ -46,6 +51,7 @@ namespace GreasyPlatypusSlapper
         {
             
             spriteSheet = FlatRedBall.FlatRedBallServices.Load<Microsoft.Xna.Framework.Graphics.Texture2D>(@"content/globalcontent/spritesheet.png", ContentManagerName);
+            Particles = FlatRedBall.FlatRedBallServices.Load<FlatRedBall.Graphics.Animation.AnimationChainList>(@"content/globalcontent/particles.achx", ContentManagerName);
             			IsInitialized = true;
             #if DEBUG && WINDOWS
             InitializeFileWatch();
@@ -79,6 +85,10 @@ namespace GreasyPlatypusSlapper
                 if (relativeFileName == "content/globalcontent/spritesheet.png")
                 {
                     Reload(spriteSheet);
+                }
+                if (relativeFileName == "content/globalcontent/particles.achx")
+                {
+                    Reload(Particles);
                 }
             }
             catch{}

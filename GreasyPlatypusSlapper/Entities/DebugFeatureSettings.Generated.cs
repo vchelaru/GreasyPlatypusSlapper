@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.Text;
 namespace GreasyPlatypusSlapper.Entities
 {
-    public partial class Turret : FlatRedBall.PositionedObject, FlatRedBall.Graphics.IDestroyable
+    public partial class DebugFeatureSettings : FlatRedBall.PositionedObject, FlatRedBall.Graphics.IDestroyable
     {
         // This is made static so that static lazy-loaded content can access it.
         public static string ContentManagerName { get; set; }
@@ -25,19 +25,18 @@ namespace GreasyPlatypusSlapper.Entities
         static object mLockObject = new object();
         static System.Collections.Generic.List<string> mRegisteredUnloads = new System.Collections.Generic.List<string>();
         static System.Collections.Generic.List<string> LoadedContentManagers = new System.Collections.Generic.List<string>();
-        protected static FlatRedBall.Graphics.Animation.AnimationChainList AnimationChainListFile;
         
-        private FlatRedBall.Sprite SpriteInstance;
+        public static bool EnableTankTreads = true;
         protected FlatRedBall.Graphics.Layer LayerProvidedByContainer = null;
-        public Turret () 
+        public DebugFeatureSettings () 
         	: this(FlatRedBall.Screens.ScreenManager.CurrentScreen.ContentManagerName, true)
         {
         }
-        public Turret (string contentManagerName) 
+        public DebugFeatureSettings (string contentManagerName) 
         	: this(contentManagerName, true)
         {
         }
-        public Turret (string contentManagerName, bool addToManagers) 
+        public DebugFeatureSettings (string contentManagerName, bool addToManagers) 
         	: base()
         {
             ContentManagerName = contentManagerName;
@@ -46,8 +45,6 @@ namespace GreasyPlatypusSlapper.Entities
         protected virtual void InitializeEntity (bool addToManagers) 
         {
             LoadStaticContent(ContentManagerName);
-            SpriteInstance = new FlatRedBall.Sprite();
-            SpriteInstance.Name = "SpriteInstance";
             
             PostInitialize();
             if (addToManagers)
@@ -59,13 +56,11 @@ namespace GreasyPlatypusSlapper.Entities
         {
             LayerProvidedByContainer = layerToAddTo;
             FlatRedBall.SpriteManager.AddPositionedObject(this);
-            FlatRedBall.SpriteManager.AddToLayer(SpriteInstance, LayerProvidedByContainer);
         }
         public virtual void AddToManagers (FlatRedBall.Graphics.Layer layerToAddTo) 
         {
             LayerProvidedByContainer = layerToAddTo;
             FlatRedBall.SpriteManager.AddPositionedObject(this);
-            FlatRedBall.SpriteManager.AddToLayer(SpriteInstance, LayerProvidedByContainer);
             AddToManagersBottomUp(layerToAddTo);
             CustomInitialize();
         }
@@ -78,24 +73,12 @@ namespace GreasyPlatypusSlapper.Entities
         {
             FlatRedBall.SpriteManager.RemovePositionedObject(this);
             
-            if (SpriteInstance != null)
-            {
-                FlatRedBall.SpriteManager.RemoveSprite(SpriteInstance);
-            }
             CustomDestroy();
         }
         public virtual void PostInitialize () 
         {
             bool oldShapeManagerSuppressAdd = FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue;
             FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = true;
-            if (SpriteInstance.Parent == null)
-            {
-                SpriteInstance.CopyAbsoluteToRelative();
-                SpriteInstance.AttachTo(this, false);
-            }
-            SpriteInstance.TextureScale = 1f;
-            SpriteInstance.AnimationChains = AnimationChainListFile;
-            SpriteInstance.CurrentChainName = "OrangeTurret";
             FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = oldShapeManagerSuppressAdd;
         }
         public virtual void AddToManagersBottomUp (FlatRedBall.Graphics.Layer layerToAddTo) 
@@ -105,25 +88,17 @@ namespace GreasyPlatypusSlapper.Entities
         public virtual void RemoveFromManagers () 
         {
             FlatRedBall.SpriteManager.ConvertToManuallyUpdated(this);
-            if (SpriteInstance != null)
-            {
-                FlatRedBall.SpriteManager.RemoveSpriteOneWay(SpriteInstance);
-            }
         }
         public virtual void AssignCustomVariables (bool callOnContainedElements) 
         {
             if (callOnContainedElements)
             {
             }
-            SpriteInstance.TextureScale = 1f;
-            SpriteInstance.AnimationChains = AnimationChainListFile;
-            SpriteInstance.CurrentChainName = "OrangeTurret";
         }
         public virtual void ConvertToManuallyUpdated () 
         {
             this.ForceUpdateDependenciesDeep();
             FlatRedBall.SpriteManager.ConvertToManuallyUpdated(this);
-            FlatRedBall.SpriteManager.ConvertToManuallyUpdated(SpriteInstance);
         }
         public static void LoadStaticContent (string contentManagerName) 
         {
@@ -150,15 +125,10 @@ namespace GreasyPlatypusSlapper.Entities
                 {
                     if (!mRegisteredUnloads.Contains(ContentManagerName) && ContentManagerName != FlatRedBall.FlatRedBallServices.GlobalContentManager)
                     {
-                        FlatRedBall.FlatRedBallServices.GetContentManagerByName(ContentManagerName).AddUnloadMethod("TurretStaticUnload", UnloadStaticContent);
+                        FlatRedBall.FlatRedBallServices.GetContentManagerByName(ContentManagerName).AddUnloadMethod("DebugFeatureSettingsStaticUnload", UnloadStaticContent);
                         mRegisteredUnloads.Add(ContentManagerName);
                     }
                 }
-                if (!FlatRedBall.FlatRedBallServices.IsLoaded<FlatRedBall.Graphics.Animation.AnimationChainList>(@"content/entities/turret/animationchainlistfile.achx", ContentManagerName))
-                {
-                    registerUnload = true;
-                }
-                AnimationChainListFile = FlatRedBall.FlatRedBallServices.Load<FlatRedBall.Graphics.Animation.AnimationChainList>(@"content/entities/turret/animationchainlistfile.achx", ContentManagerName);
             }
             if (registerUnload && ContentManagerName != FlatRedBall.FlatRedBallServices.GlobalContentManager)
             {
@@ -166,7 +136,7 @@ namespace GreasyPlatypusSlapper.Entities
                 {
                     if (!mRegisteredUnloads.Contains(ContentManagerName) && ContentManagerName != FlatRedBall.FlatRedBallServices.GlobalContentManager)
                     {
-                        FlatRedBall.FlatRedBallServices.GetContentManagerByName(ContentManagerName).AddUnloadMethod("TurretStaticUnload", UnloadStaticContent);
+                        FlatRedBall.FlatRedBallServices.GetContentManagerByName(ContentManagerName).AddUnloadMethod("DebugFeatureSettingsStaticUnload", UnloadStaticContent);
                         mRegisteredUnloads.Add(ContentManagerName);
                     }
                 }
@@ -182,38 +152,19 @@ namespace GreasyPlatypusSlapper.Entities
             }
             if (LoadedContentManagers.Count == 0)
             {
-                if (AnimationChainListFile != null)
-                {
-                    AnimationChainListFile= null;
-                }
             }
         }
         [System.Obsolete("Use GetFile instead")]
         public static object GetStaticMember (string memberName) 
         {
-            switch(memberName)
-            {
-                case  "AnimationChainListFile":
-                    return AnimationChainListFile;
-            }
             return null;
         }
         public static object GetFile (string memberName) 
         {
-            switch(memberName)
-            {
-                case  "AnimationChainListFile":
-                    return AnimationChainListFile;
-            }
             return null;
         }
         object GetMember (string memberName) 
         {
-            switch(memberName)
-            {
-                case  "AnimationChainListFile":
-                    return AnimationChainListFile;
-            }
             return null;
         }
         protected bool mIsPaused;
@@ -225,16 +176,10 @@ namespace GreasyPlatypusSlapper.Entities
         public virtual void SetToIgnorePausing () 
         {
             FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(this);
-            FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(SpriteInstance);
         }
         public virtual void MoveToLayer (FlatRedBall.Graphics.Layer layerToMoveTo) 
         {
             var layerToRemoveFrom = LayerProvidedByContainer;
-            if (layerToRemoveFrom != null)
-            {
-                layerToRemoveFrom.Remove(SpriteInstance);
-            }
-            FlatRedBall.SpriteManager.AddToLayer(SpriteInstance, layerToMoveTo);
             LayerProvidedByContainer = layerToMoveTo;
         }
     }

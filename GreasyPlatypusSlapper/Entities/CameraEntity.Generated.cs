@@ -6,6 +6,7 @@ using GreasyPlatypusSlapper.Screens;
 using FlatRedBall.Graphics;
 using FlatRedBall.Math;
 using GreasyPlatypusSlapper.Entities;
+using GreasyPlatypusSlapper.Entities.Effects;
 using GreasyPlatypusSlapper.Factories;
 using FlatRedBall;
 using FlatRedBall.Screens;
