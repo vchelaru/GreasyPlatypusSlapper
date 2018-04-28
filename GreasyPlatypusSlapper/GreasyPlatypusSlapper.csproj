@@ -60,6 +60,10 @@
     <Compile Include="Entities\Effects\TreadEffect.Generated.cs">
       <DependentUpon>TreadEffect.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entities\NetworkController.cs" />
+    <Compile Include="Entities\NetworkController.Generated.cs">
+      <DependentUpon>NetworkController.cs</DependentUpon>
+    </Compile>
     <Compile Include="Entities\Tank.cs" />
     <Compile Include="Entities\Tank.Generated.cs">
       <DependentUpon>Tank.cs</DependentUpon>
@@ -232,7 +236,12 @@
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\RedGrin\RedGrin.csproj">
+      <Project>{9A4FD6E3-7795-4C93-B670-7BE2C3DC8639}</Project>
+      <Name>RedGrin</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

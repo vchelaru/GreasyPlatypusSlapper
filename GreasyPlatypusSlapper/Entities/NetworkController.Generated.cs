@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.Text;
 namespace GreasyPlatypusSlapper.Entities
 {
-    public partial class DebugFeatureSettings : FlatRedBall.PositionedObject, FlatRedBall.Graphics.IDestroyable
+    public partial class NetworkController : FlatRedBall.PositionedObject, FlatRedBall.Graphics.IDestroyable
     {
         // This is made static so that static lazy-loaded content can access it.
         public static string ContentManagerName { get; set; }
@@ -26,19 +26,16 @@ namespace GreasyPlatypusSlapper.Entities
         static System.Collections.Generic.List<string> mRegisteredUnloads = new System.Collections.Generic.List<string>();
         static System.Collections.Generic.List<string> LoadedContentManagers = new System.Collections.Generic.List<string>();
         
-        public static bool EnableTankTreads = true;
-        public static bool EnableRocketTrails = true;
-        public static bool EnableTurnBasedMovement = false;
         protected FlatRedBall.Graphics.Layer LayerProvidedByContainer = null;
-        public DebugFeatureSettings () 
+        public NetworkController () 
         	: this(FlatRedBall.Screens.ScreenManager.CurrentScreen.ContentManagerName, true)
         {
         }
-        public DebugFeatureSettings (string contentManagerName) 
+        public NetworkController (string contentManagerName) 
         	: this(contentManagerName, true)
         {
         }
-        public DebugFeatureSettings (string contentManagerName, bool addToManagers) 
+        public NetworkController (string contentManagerName, bool addToManagers) 
         	: base()
         {
             ContentManagerName = contentManagerName;
@@ -127,7 +124,7 @@ namespace GreasyPlatypusSlapper.Entities
                 {
                     if (!mRegisteredUnloads.Contains(ContentManagerName) && ContentManagerName != FlatRedBall.FlatRedBallServices.GlobalContentManager)
                     {
-                        FlatRedBall.FlatRedBallServices.GetContentManagerByName(ContentManagerName).AddUnloadMethod("DebugFeatureSettingsStaticUnload", UnloadStaticContent);
+                        FlatRedBall.FlatRedBallServices.GetContentManagerByName(ContentManagerName).AddUnloadMethod("NetworkControllerStaticUnload", UnloadStaticContent);
                         mRegisteredUnloads.Add(ContentManagerName);
                     }
                 }
@@ -138,7 +135,7 @@ namespace GreasyPlatypusSlapper.Entities
                 {
                     if (!mRegisteredUnloads.Contains(ContentManagerName) && ContentManagerName != FlatRedBall.FlatRedBallServices.GlobalContentManager)
                     {
-                        FlatRedBall.FlatRedBallServices.GetContentManagerByName(ContentManagerName).AddUnloadMethod("DebugFeatureSettingsStaticUnload", UnloadStaticContent);
+                        FlatRedBall.FlatRedBallServices.GetContentManagerByName(ContentManagerName).AddUnloadMethod("NetworkControllerStaticUnload", UnloadStaticContent);
                         mRegisteredUnloads.Add(ContentManagerName);
                     }
                 }

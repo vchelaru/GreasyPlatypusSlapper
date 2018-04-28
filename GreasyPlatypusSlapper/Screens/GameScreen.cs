@@ -13,11 +13,17 @@ using FlatRedBall.Math.Geometry;
 using FlatRedBall.Localization;
 using FlatRedBall.Math.Collision;
 using GreasyPlatypusSlapper.Entities;
+using FlatRedBall.TileCollisions;
+using RedGrin;
 
 namespace GreasyPlatypusSlapper.Screens
 {
-	public partial class GameScreen
+	public partial class GameScreen : INetworkArena
 	{
+        TileShapeCollection solidCollision;
+        TileShapeCollection roadCollision;
+
+        CollisionRelationship roadVsTankRelationship;
 
 		void CustomInitialize()
 		{
@@ -31,16 +37,26 @@ namespace GreasyPlatypusSlapper.Screens
 
         private void InitializeActivity()
         {
-            foreach(var collision in TestLevel.Collisions)
+            InitializeCollision();
+
+        }
+
+        private void InitializeCollision()
+        {
+            solidCollision = TestLevel.Collisions.FirstOrDefault(item => item.Name == "Tiles");
+            roadCollision = TestLevel.Collisions.FirstOrDefault(item => item.Name == "RoadTiles");
+            foreach (var collision in TestLevel.Collisions)
             {
                 collision.Visible = true;
             }
-
-            var relationship = CollisionManager.Self.CreateTileRelationship(TankList, TestLevel.Collisions[0]);
+            var relationship = CollisionManager.Self.CreateTileRelationship(TankList, solidCollision);
             relationship.SetMoveCollision(0, 1);
 
             var bulletVsTank = CollisionManager.Self.CreateRelationship(TankList, BulletList);
             bulletVsTank.CollisionOccurred = HandleBulletVsTankCollision;
+
+            roadVsTankRelationship = CollisionManager.Self.CreateTileRelationship(TankList, roadCollision);
+            roadVsTankRelationship.IsActive = false;
         }
 
         private void HandleBulletVsTankCollision(Tank tank, Bullet bullet)
@@ -58,6 +74,13 @@ namespace GreasyPlatypusSlapper.Screens
             RestartActivity();
 
 #endif
+
+            CustomCollisionActivity();
+
+        }
+
+        private void CustomCollisionActivity()
+        {
 
         }
 
@@ -81,5 +104,16 @@ namespace GreasyPlatypusSlapper.Screens
 
         }
 
-	}
+        // TODO: Create a NetworkController entity
+        public INetworkEntity RequestCreateEntity(long ownerId, long entityId, object entityData)
+        {
+            throw new NotImplementedException();
+        }
+
+        // TODO: Destroy a NetworkController entity by id
+        public void RequestDestroyEntity(INetworkEntity entity)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
