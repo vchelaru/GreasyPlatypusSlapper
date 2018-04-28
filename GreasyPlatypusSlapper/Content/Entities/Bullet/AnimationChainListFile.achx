@@ -8,10 +8,21 @@
     <Frame>
       <TextureName>../../globalcontent/spritesheet.png</TextureName>
       <FrameLength>0.1</FrameLength>
-      <LeftCoordinate>170</LeftCoordinate>
-      <RightCoordinate>182</RightCoordinate>
-      <TopCoordinate>621</TopCoordinate>
-      <BottomCoordinate>627</BottomCoordinate>
+      <LeftCoordinate>160</LeftCoordinate>
+      <RightCoordinate>192</RightCoordinate>
+      <TopCoordinate>608</TopCoordinate>
+      <BottomCoordinate>640</BottomCoordinate>
+    </Frame>
+  </AnimationChain>
+  <AnimationChain>
+    <Name>MissileShadow</Name>
+    <Frame>
+      <TextureName>../../globalcontent/spritesheet.png</TextureName>
+      <FrameLength>0.1</FrameLength>
+      <LeftCoordinate>96</LeftCoordinate>
+      <RightCoordinate>112</RightCoordinate>
+      <TopCoordinate>736</TopCoordinate>
+      <BottomCoordinate>752</BottomCoordinate>
     </Frame>
   </AnimationChain>
 </AnimationChainArraySave>

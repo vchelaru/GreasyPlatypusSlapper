@@ -175,6 +175,7 @@ namespace GreasyPlatypusSlapper.Entities
                 mCircleInstance.AttachTo(this, false);
             }
             CircleInstance.Radius = 16f;
+            CircleInstance.Visible = false;
             if (TurretInstance.Parent == null)
             {
                 TurretInstance.CopyAbsoluteToRelative();
@@ -274,6 +275,7 @@ namespace GreasyPlatypusSlapper.Entities
             SpriteInstance.AnimationChains = AnimationChainListFile;
             SpriteInstance.CurrentChainName = "OrangeBody";
             CircleInstance.Radius = 16f;
+            CircleInstance.Visible = false;
             if (TurretInstance.Parent == null)
             {
                 TurretInstance.X = 3.5f;

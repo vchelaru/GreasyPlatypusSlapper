@@ -3,5 +3,6 @@
   <OffsetMultiplier>1</OffsetMultiplier>
   <AnimationChainSettings />
   <ExpandedNode>OrangeMissile</ExpandedNode>
+  <ExpandedNode>MissileShadow</ExpandedNode>
   <UnitType>Pixel</UnitType>
 </AESettingsSave>
