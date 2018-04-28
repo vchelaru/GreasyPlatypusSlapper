@@ -209,19 +209,19 @@ namespace GreasyPlatypusSlapper.Entities
             }
             if (MissileTrailInstance.Parent == null)
             {
-                MissileTrailInstance.Z = 2f;
-            }
-            else
-            {
-                MissileTrailInstance.RelativeZ = 2f;
-            }
-            if (MissileTrailInstance.Parent == null)
-            {
                 MissileTrailInstance.X = -20f;
             }
             else
             {
                 MissileTrailInstance.RelativeX = -20f;
+            }
+            if (MissileTrailInstance.Parent == null)
+            {
+                MissileTrailInstance.Z = 2f;
+            }
+            else
+            {
+                MissileTrailInstance.RelativeZ = 2f;
             }
             mGeneratedCollision = new FlatRedBall.Math.Geometry.ShapeCollection();
             mGeneratedCollision.Circles.AddOneWay(mCircleInstance);
@@ -299,19 +299,19 @@ namespace GreasyPlatypusSlapper.Entities
             BulletShadow.ParentRotationChangesPosition = false;
             if (MissileTrailInstance.Parent == null)
             {
-                MissileTrailInstance.Z = 2f;
-            }
-            else
-            {
-                MissileTrailInstance.RelativeZ = 2f;
-            }
-            if (MissileTrailInstance.Parent == null)
-            {
                 MissileTrailInstance.X = -20f;
             }
             else
             {
                 MissileTrailInstance.RelativeX = -20f;
+            }
+            if (MissileTrailInstance.Parent == null)
+            {
+                MissileTrailInstance.Z = 2f;
+            }
+            else
+            {
+                MissileTrailInstance.RelativeZ = 2f;
             }
         }
         public virtual void ConvertToManuallyUpdated () 
