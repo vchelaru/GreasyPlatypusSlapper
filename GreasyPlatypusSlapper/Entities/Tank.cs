@@ -19,84 +19,91 @@ namespace GreasyPlatypusSlapper.Entities
 	{
 
 
-        I2DInput movementInput;
-        I2DInput aimingInput;
-        IPressableInput shootingInput;
-        double lastTreadTime;
-        float currentHealth;
-	    IPressableInput boostInput;
-	    double lastBoostTime;
+		I2DInput movementInput;
+		I2DInput aimingInput;
+		IPressableInput shootingInput;
+		double lastTreadTime;
+		float currentHealth;
+		IPressableInput boostInput;
+		double lastBoostTime;
 		float activeBoostModifier;
 
-        public int TeamIndex { get; set; }
-        public float CurrentSpeed
-        {
-            get
-            {
-                return Velocity.Length();
-            }
-        }
-        public float CurrentHealthPercent
-        {
-            get
-            {
-                return currentHealth / MaxHealth;
-            }
-        }
-
-        /// <summary>
-        /// Initialization logic which is execute only one time for this Entity (unless the Entity is pooled).
-        /// This method is called when the Entity is added to managers. Entities which are instantiated but not
-        /// added to managers will not have this method called.
-        /// </summary>
-		private void CustomInitialize()
+		public int TeamIndex { get; set; }
+		public float CurrentSpeed
 		{
-            this.TurretInstance.ParentRotationChangesRotation = false;
-			lastBoostTime = 0 - BoostDurationInSeconds - BoostTimeoutInSeconds; // so we don't start boosted
-            currentHealth = MaxHealth;
-            this.TurretInstance.ParentRotationChangesRotation = false;
+			get
+			{
+				return Velocity.Length();
+			}
+		}
+		public float CurrentHealthPercent
+		{
+			get
+			{
+				return currentHealth / MaxHealth;
+			}
 		}
 
-        public void ApplyDamage(float amount)
-        {
-            // only apply damage if we are healthy
-            if(currentHealth > 0)
-            {
-                currentHealth -= amount;
-                if (currentHealth <= 0)
-                {
-                    Die();
-                }
-            }
-        }
+		/// <summary>
+		/// Initialization logic which is execute only one time for this Entity (unless the Entity is pooled).
+		/// This method is called when the Entity is added to managers. Entities which are instantiated but not
+		/// added to managers will not have this method called.
+		/// </summary>
+		private void CustomInitialize()
+		{
+			this.TurretInstance.ParentRotationChangesRotation = false;
+			lastBoostTime = 0 - BoostDurationInSeconds - BoostTimeoutInSeconds; // so we don't start boosted
+			currentHealth = MaxHealth;
+			this.TurretInstance.ParentRotationChangesRotation = false;
+		}
 
-        public void AssignDefaultInput()
-        {
-            var keyboard = InputManager.Keyboard;
-            movementInput = keyboard.Get2DInput(Microsoft.Xna.Framework.Input.Keys.A,
-                Microsoft.Xna.Framework.Input.Keys.D,
-                Microsoft.Xna.Framework.Input.Keys.W,
-                Microsoft.Xna.Framework.Input.Keys.S);
+		public void ApplyDamage(float amount)
+		{
+			// only apply damage if we are healthy
+			if (currentHealth > 0)
+			{
+				currentHealth -= amount;
+				if (currentHealth <= 0)
+				{
+					Die();
+				}
+			}
+		}
 
-            aimingInput = keyboard.Get2DInput(Microsoft.Xna.Framework.Input.Keys.Left,
-                Microsoft.Xna.Framework.Input.Keys.Right,
-                Microsoft.Xna.Framework.Input.Keys.Up,
-                Microsoft.Xna.Framework.Input.Keys.Down);
+		public void AssignDefaultInput()
+		{
+			var keyboard = InputManager.Keyboard;
+			movementInput = keyboard.Get2DInput(Microsoft.Xna.Framework.Input.Keys.A,
+				Microsoft.Xna.Framework.Input.Keys.D,
+				Microsoft.Xna.Framework.Input.Keys.W,
+				Microsoft.Xna.Framework.Input.Keys.S);
 
-            shootingInput = keyboard.GetKey(Microsoft.Xna.Framework.Input.Keys.Space);
+			aimingInput = keyboard.Get2DInput(Microsoft.Xna.Framework.Input.Keys.Left,
+				Microsoft.Xna.Framework.Input.Keys.Right,
+				Microsoft.Xna.Framework.Input.Keys.Up,
+				Microsoft.Xna.Framework.Input.Keys.Down);
 
-            if (GlobalContent.FeatureFlags[FeatureFlags.EnableBoost].IsEnabled)
-            {
-                boostInput = keyboard.GetKey(Keys.Q);
-            }
-        }
+			shootingInput = keyboard.GetKey(Microsoft.Xna.Framework.Input.Keys.Space);
 
-        public void Die()
-        {
-            // TODO: play effects
+			if (GlobalContent.FeatureFlags[FeatureFlags.EnableBoost].IsEnabled)
+			{
+				boostInput = keyboard.GetKey(Keys.Q);
+			}
+		}
 
-            Destroy();
-        }
+		public void Die()
+		{
+			// TODO: play effects
+
+			Destroy();
+		}
+
+		public void LoadInput(I2DInput movementInput, I2DInput aimingInput, IPressableInput shootingInput)
+		{
+			this.movementInput = movementInput ?? throw new ArgumentNullException("movementInput must not be null.");
+			this.aimingInput = aimingInput ?? throw new ArgumentNullException("aimingInput must not be null.");
+			this.shootingInput = shootingInput ?? throw new ArgumentNullException("shootingInput must not be null."); 
+		}
 
         private void CustomActivity()
 		{

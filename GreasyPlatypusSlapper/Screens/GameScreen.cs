@@ -20,102 +20,117 @@ namespace GreasyPlatypusSlapper.Screens
 {
 	public partial class GameScreen : INetworkArena
 	{
-        TileShapeCollection solidCollision;
-        TileShapeCollection roadCollision;
-
-        CollisionRelationship roadVsTankRelationship;
+		TileShapeCollection solidCollision;
+		TileShapeCollection roadCollision;
+		CollisionRelationship roadVsTankRelationship;
 
 		void CustomInitialize()
 		{
-            InitializeActivity();
+			InitializeActivity();
 
-            this.Tank1Test.AssignDefaultInput();
-            this.Tank2Test.TeamIndex = 1;
+			//this.Tank1Test.AssignDefaultInput();
+			this.Tank2Test.TeamIndex = 1;
+			CreateTanksAndAssignInput();
 
-            this.CameraEntityInstance.ObjectsWatching.AddRange(this.TankList);
+			this.CameraEntityInstance.ObjectsWatching.AddRange(this.TankList);
+
+			
 		}
 
-        private void InitializeActivity()
-        {
-            InitializeCollision();
+		private void InitializeActivity()
+		{
+			InitializeCollision();
 
-        }
+		}
 
-        private void InitializeCollision()
-        {
-            solidCollision = TestLevel.Collisions.FirstOrDefault(item => item.Name == "Tiles");
-            roadCollision = TestLevel.Collisions.FirstOrDefault(item => item.Name == "RoadTiles");
-            foreach (var collision in TestLevel.Collisions)
-            {
-                collision.Visible = true;
-            }
-            var relationship = CollisionManager.Self.CreateTileRelationship(TankList, solidCollision);
-            relationship.SetMoveCollision(0, 1);
+		private void InitializeCollision()
+		{
+			solidCollision = TestLevel.Collisions.FirstOrDefault(item => item.Name == "Tiles");
+			roadCollision = TestLevel.Collisions.FirstOrDefault(item => item.Name == "RoadTiles");
+			foreach (var collision in TestLevel.Collisions)
+			{
+				collision.Visible = true;
+			}
+			var relationship = CollisionManager.Self.CreateTileRelationship(TankList, solidCollision);
+			relationship.SetMoveCollision(0, 1);
 
-            var bulletVsTank = CollisionManager.Self.CreateRelationship(TankList, BulletList);
-            bulletVsTank.CollisionOccurred = HandleBulletVsTankCollision;
+			var bulletVsTank = CollisionManager.Self.CreateRelationship(TankList, BulletList);
+			bulletVsTank.CollisionOccurred = HandleBulletVsTankCollision;
 
-            roadVsTankRelationship = CollisionManager.Self.CreateTileRelationship(TankList, roadCollision);
-            roadVsTankRelationship.IsActive = false;
-        }
+			roadVsTankRelationship = CollisionManager.Self.CreateTileRelationship(TankList, roadCollision);
+			roadVsTankRelationship.IsActive = false;
+		}
 
-        private void HandleBulletVsTankCollision(Tank tank, Bullet bullet)
-        {
-            if(bullet.TeamIndex != tank.TeamIndex)
-            {
-                tank.ApplyDamage(bullet.Damage);
-                bullet.Destroy();
-            }
-        }
+		private void HandleBulletVsTankCollision(Tank tank, Bullet bullet)
+		{
+			if (bullet.TeamIndex != tank.TeamIndex)
+			{
+				tank.ApplyDamage(bullet.Damage);
+				bullet.Destroy();
+			}
+		}
 
-        void CustomActivity(bool firstTimeCalled)
+		void CustomActivity(bool firstTimeCalled)
 		{
 #if DEBUG
-            RestartActivity();
+			RestartActivity();
 
 #endif
 
-            CustomCollisionActivity();
+			CustomCollisionActivity();
 
-        }
+		}
 
-        private void CustomCollisionActivity()
-        {
-            var isBoosting = roadVsTankRelationship.DoCollisions();
+		private void CustomCollisionActivity()
+		{
+			var isBoosting = roadVsTankRelationship.DoCollisions();
 
-            FlatRedBall.Debugging.Debugger.Write(isBoosting);
-        }
+			FlatRedBall.Debugging.Debugger.Write(isBoosting);
+		}
 
-        private void RestartActivity()
-        {
-            if(InputManager.Keyboard.KeyPushed(Microsoft.Xna.Framework.Input.Keys.R))
-            {
-                this.RestartScreen(true);
-            }
-        }
+		private void RestartActivity()
+		{
+			if (InputManager.Keyboard.KeyPushed(Microsoft.Xna.Framework.Input.Keys.R))
+			{
+				this.RestartScreen(true);
+			}
+		}
 
-        void CustomDestroy()
+		void CustomDestroy()
 		{
 
 
 		}
 
-        static void CustomLoadStaticContent(string contentManagerName)
-        {
+		void CreateTanksAndAssignInput()
+		{
+			//Test code for a single input. 
+			for(int i = 0; i < InputManager.Xbox360GamePads.Length; i++)
+			{
+				var gamePad = InputManager.Xbox360GamePads[i];
+				I2DInput movementInput = gamePad.LeftStick;
+				I2DInput aimingInput = gamePad.RightStick;
+				IPressableInput shootingInput = gamePad.RightTrigger;
+				Tank1Test.LoadInput(movementInput, aimingInput, shootingInput);
+			}
+		}
+
+		static void CustomLoadStaticContent(string contentManagerName)
+		{
 
 
-        }
+		}
 
-        // TODO: Create a NetworkController entity
-        public INetworkEntity RequestCreateEntity(long ownerId, long entityId, object entityData)
-        {
-            throw new NotImplementedException();
-        }
+		// TODO: Create a NetworkController entity
+		public INetworkEntity RequestCreateEntity(long ownerId, long entityId, object entityData)
+		{
+			throw new NotImplementedException();
+		}
 
-        // TODO: Destroy a NetworkController entity by id
-        public void RequestDestroyEntity(INetworkEntity entity)
-        {
-            throw new NotImplementedException();
-        }
-    }
+		// TODO: Destroy a NetworkController entity by id
+		public void RequestDestroyEntity(INetworkEntity entity)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }
