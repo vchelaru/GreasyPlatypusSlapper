@@ -156,7 +156,7 @@ namespace GreasyPlatypusSlapper.Entities
 
         private void ApplyTurretAiming()
         {
-            if (DebugFeatureSettings.EnableTurnBasedMovement)
+            if (GlobalContent.FeatureFlags[FeatureFlags.EnableTurnBasedMovement].IsEnabled)
             {
                 ApplyTurnBasedTurretAiming();
             }
@@ -191,7 +191,7 @@ namespace GreasyPlatypusSlapper.Entities
             var rotationVelocity = 0f;
             if (aimingInput?.Magnitude > .2f)
             {
-                rotationVelocity = aimingInput?.X ?? rotationVelocity;
+                rotationVelocity = -1 * aimingInput?.X ?? rotationVelocity;
             }
             TurretInstance.RelativeRotationZVelocity = rotationVelocity;
         }
@@ -228,7 +228,7 @@ namespace GreasyPlatypusSlapper.Entities
 	    private void ApplyTurnBasedMovement()
 	    {
 	        // copied from previous movement
-	        const int rotationSpeed = 3;
+	        const int rotationSpeed = -3;
 	        const int forwardSpeed = 100;
 
 		    var forwardVelocity = 0f;
