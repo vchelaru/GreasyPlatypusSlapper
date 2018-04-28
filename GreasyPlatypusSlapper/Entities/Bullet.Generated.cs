@@ -43,6 +43,7 @@ namespace GreasyPlatypusSlapper.Entities
             }
         }
         private FlatRedBall.Sprite BulletShadow;
+        private GreasyPlatypusSlapper.Entities.Effects.MissileTrail MissileTrailInstance;
         public int Index { get; set; }
         public bool Used { get; set; }
         private FlatRedBall.Math.Geometry.ShapeCollection mGeneratedCollision;
@@ -77,6 +78,8 @@ namespace GreasyPlatypusSlapper.Entities
             mCircleInstance.Name = "mCircleInstance";
             BulletShadow = new FlatRedBall.Sprite();
             BulletShadow.Name = "BulletShadow";
+            MissileTrailInstance = new GreasyPlatypusSlapper.Entities.Effects.MissileTrail(ContentManagerName, false);
+            MissileTrailInstance.Name = "MissileTrailInstance";
             
             PostInitialize();
             if (addToManagers)
@@ -91,6 +94,7 @@ namespace GreasyPlatypusSlapper.Entities
             FlatRedBall.SpriteManager.AddToLayer(SpriteInstance, LayerProvidedByContainer);
             FlatRedBall.Math.Geometry.ShapeManager.AddToLayer(mCircleInstance, LayerProvidedByContainer);
             FlatRedBall.SpriteManager.AddToLayer(BulletShadow, LayerProvidedByContainer);
+            MissileTrailInstance.ReAddToManagers(LayerProvidedByContainer);
         }
         public virtual void AddToManagers (FlatRedBall.Graphics.Layer layerToAddTo) 
         {
@@ -99,12 +103,14 @@ namespace GreasyPlatypusSlapper.Entities
             FlatRedBall.SpriteManager.AddToLayer(SpriteInstance, LayerProvidedByContainer);
             FlatRedBall.Math.Geometry.ShapeManager.AddToLayer(mCircleInstance, LayerProvidedByContainer);
             FlatRedBall.SpriteManager.AddToLayer(BulletShadow, LayerProvidedByContainer);
+            MissileTrailInstance.AddToManagers(LayerProvidedByContainer);
             AddToManagersBottomUp(layerToAddTo);
             CustomInitialize();
         }
         public virtual void Activity () 
         {
             
+            MissileTrailInstance.Activity();
             CustomActivity();
         }
         public virtual void Destroy () 
@@ -126,6 +132,11 @@ namespace GreasyPlatypusSlapper.Entities
             if (BulletShadow != null)
             {
                 FlatRedBall.SpriteManager.RemoveSpriteOneWay(BulletShadow);
+            }
+            if (MissileTrailInstance != null)
+            {
+                MissileTrailInstance.Destroy();
+                MissileTrailInstance.Detach();
             }
             mGeneratedCollision.RemoveFromManagers(clearThis: false);
             CustomDestroy();
@@ -191,6 +202,27 @@ namespace GreasyPlatypusSlapper.Entities
             BulletShadow.AnimationChains = AnimationChainListFile;
             BulletShadow.CurrentChainName = "MissileShadow";
             BulletShadow.ParentRotationChangesPosition = false;
+            if (MissileTrailInstance.Parent == null)
+            {
+                MissileTrailInstance.CopyAbsoluteToRelative();
+                MissileTrailInstance.AttachTo(this, false);
+            }
+            if (MissileTrailInstance.Parent == null)
+            {
+                MissileTrailInstance.Z = 2f;
+            }
+            else
+            {
+                MissileTrailInstance.RelativeZ = 2f;
+            }
+            if (MissileTrailInstance.Parent == null)
+            {
+                MissileTrailInstance.X = -20f;
+            }
+            else
+            {
+                MissileTrailInstance.RelativeX = -20f;
+            }
             mGeneratedCollision = new FlatRedBall.Math.Geometry.ShapeCollection();
             mGeneratedCollision.Circles.AddOneWay(mCircleInstance);
             FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = oldShapeManagerSuppressAdd;
@@ -214,12 +246,14 @@ namespace GreasyPlatypusSlapper.Entities
             {
                 FlatRedBall.SpriteManager.RemoveSpriteOneWay(BulletShadow);
             }
+            MissileTrailInstance.RemoveFromManagers();
             mGeneratedCollision.RemoveFromManagers(clearThis: false);
         }
         public virtual void AssignCustomVariables (bool callOnContainedElements) 
         {
             if (callOnContainedElements)
             {
+                MissileTrailInstance.AssignCustomVariables(true);
             }
             if (SpriteInstance.Parent == null)
             {
@@ -263,6 +297,22 @@ namespace GreasyPlatypusSlapper.Entities
             BulletShadow.AnimationChains = AnimationChainListFile;
             BulletShadow.CurrentChainName = "MissileShadow";
             BulletShadow.ParentRotationChangesPosition = false;
+            if (MissileTrailInstance.Parent == null)
+            {
+                MissileTrailInstance.Z = 2f;
+            }
+            else
+            {
+                MissileTrailInstance.RelativeZ = 2f;
+            }
+            if (MissileTrailInstance.Parent == null)
+            {
+                MissileTrailInstance.X = -20f;
+            }
+            else
+            {
+                MissileTrailInstance.RelativeX = -20f;
+            }
         }
         public virtual void ConvertToManuallyUpdated () 
         {
@@ -270,6 +320,7 @@ namespace GreasyPlatypusSlapper.Entities
             FlatRedBall.SpriteManager.ConvertToManuallyUpdated(this);
             FlatRedBall.SpriteManager.ConvertToManuallyUpdated(SpriteInstance);
             FlatRedBall.SpriteManager.ConvertToManuallyUpdated(BulletShadow);
+            MissileTrailInstance.ConvertToManuallyUpdated();
         }
         public static void LoadStaticContent (string contentManagerName) 
         {
@@ -306,6 +357,7 @@ namespace GreasyPlatypusSlapper.Entities
                 }
                 AnimationChainListFile = FlatRedBall.FlatRedBallServices.Load<FlatRedBall.Graphics.Animation.AnimationChainList>(@"content/entities/bullet/animationchainlistfile.achx", ContentManagerName);
             }
+            GreasyPlatypusSlapper.Entities.Effects.MissileTrail.LoadStaticContent(contentManagerName);
             if (registerUnload && ContentManagerName != FlatRedBall.FlatRedBallServices.GlobalContentManager)
             {
                 lock (mLockObject)
@@ -374,6 +426,7 @@ namespace GreasyPlatypusSlapper.Entities
             FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(SpriteInstance);
             FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(CircleInstance);
             FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(BulletShadow);
+            MissileTrailInstance.SetToIgnorePausing();
         }
         public virtual void MoveToLayer (FlatRedBall.Graphics.Layer layerToMoveTo) 
         {
@@ -393,6 +446,7 @@ namespace GreasyPlatypusSlapper.Entities
                 layerToRemoveFrom.Remove(BulletShadow);
             }
             FlatRedBall.SpriteManager.AddToLayer(BulletShadow, layerToMoveTo);
+            MissileTrailInstance.MoveToLayer(layerToMoveTo);
             LayerProvidedByContainer = layerToMoveTo;
         }
     }

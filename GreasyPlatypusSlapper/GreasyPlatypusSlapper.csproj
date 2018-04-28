@@ -52,6 +52,10 @@
     <Compile Include="Entities\DebugFeatureSettings.Generated.cs">
       <DependentUpon>DebugFeatureSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entities\Effects\MissileTrail.cs" />
+    <Compile Include="Entities\Effects\MissileTrail.Generated.cs">
+      <DependentUpon>MissileTrail.cs</DependentUpon>
+    </Compile>
     <Compile Include="Entities\Effects\TreadEffect.cs" />
     <Compile Include="Entities\Effects\TreadEffect.Generated.cs">
       <DependentUpon>TreadEffect.cs</DependentUpon>
@@ -105,6 +109,7 @@
     <Compile Include="TileGraphics\TileNodeNetworkCreator.cs" />
     <Compile Include="TileGraphics\Tileset.cs" />
     <Compile Include="TileGraphics\TilesetExtensionMethods.cs" />
+    <Compile Include="Utilities\MathUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FlatRedBall.Forms, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
