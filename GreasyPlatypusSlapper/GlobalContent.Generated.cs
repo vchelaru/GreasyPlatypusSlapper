@@ -13,6 +13,8 @@ using FlatRedBall.AI.Pathfinding;
 using FlatRedBall.Utilities;
 using BitmapFont = FlatRedBall.Graphics.BitmapFont;
 using FlatRedBall.Localization;
+using GreasyPlatypusSlapper.DataTypes;
+using FlatRedBall.IO.Csv;
 
 namespace GreasyPlatypusSlapper
 {
@@ -21,6 +23,7 @@ namespace GreasyPlatypusSlapper
         
         public static Microsoft.Xna.Framework.Graphics.Texture2D spriteSheet { get; set; }
         public static FlatRedBall.Graphics.Animation.AnimationChainList Particles { get; set; }
+        public static System.Collections.Generic.Dictionary<string, GreasyPlatypusSlapper.DataTypes.FeatureFlags> FeatureFlags { get; set; }
         [System.Obsolete("Use GetFile instead")]
         public static object GetStaticMember (string memberName) 
         {
@@ -30,6 +33,8 @@ namespace GreasyPlatypusSlapper
                     return spriteSheet;
                 case  "Particles":
                     return Particles;
+                case  "FeatureFlags":
+                    return FeatureFlags;
             }
             return null;
         }
@@ -41,6 +46,8 @@ namespace GreasyPlatypusSlapper
                     return spriteSheet;
                 case  "Particles":
                     return Particles;
+                case  "FeatureFlags":
+                    return FeatureFlags;
             }
             return null;
         }
@@ -52,6 +59,18 @@ namespace GreasyPlatypusSlapper
             
             spriteSheet = FlatRedBall.FlatRedBallServices.Load<Microsoft.Xna.Framework.Graphics.Texture2D>(@"content/globalcontent/spritesheet.png", ContentManagerName);
             Particles = FlatRedBall.FlatRedBallServices.Load<FlatRedBall.Graphics.Animation.AnimationChainList>(@"content/globalcontent/particles.achx", ContentManagerName);
+            if (FeatureFlags == null)
+            {
+                {
+                    // We put the { and } to limit the scope of oldDelimiter
+                    char oldDelimiter = FlatRedBall.IO.Csv.CsvFileManager.Delimiter;
+                    FlatRedBall.IO.Csv.CsvFileManager.Delimiter = ',';
+                    System.Collections.Generic.Dictionary<string, GreasyPlatypusSlapper.DataTypes.FeatureFlags> temporaryCsvObject = new System.Collections.Generic.Dictionary<string, GreasyPlatypusSlapper.DataTypes.FeatureFlags>();
+                    FlatRedBall.IO.Csv.CsvFileManager.CsvDeserializeDictionary<string, GreasyPlatypusSlapper.DataTypes.FeatureFlags>("content/globalcontent/featureflags.csv", temporaryCsvObject);
+                    FlatRedBall.IO.Csv.CsvFileManager.Delimiter = oldDelimiter;
+                    FeatureFlags = temporaryCsvObject;
+                }
+            }
             			IsInitialized = true;
             #if DEBUG && WINDOWS
             InitializeFileWatch();
@@ -59,6 +78,10 @@ namespace GreasyPlatypusSlapper
         }
         public static void Reload (object whatToReload) 
         {
+            if (whatToReload == FeatureFlags)
+            {
+                FlatRedBall.IO.Csv.CsvFileManager.UpdateDictionaryValuesFromCsv(FeatureFlags, "content/globalcontent/featureflags.csv");
+            }
         }
         #if DEBUG && WINDOWS
         static System.IO.FileSystemWatcher watcher;

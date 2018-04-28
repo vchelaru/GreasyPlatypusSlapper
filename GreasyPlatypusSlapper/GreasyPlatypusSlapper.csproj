@@ -39,6 +39,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DataTypes\FeatureFlags.Generated.cs" />
     <Compile Include="DataTypes\TileMapInfo.Generated.cs" />
     <Compile Include="Entities\Bullet.cs" />
     <Compile Include="Entities\Bullet.Generated.cs">
@@ -47,10 +48,6 @@
     <Compile Include="Entities\CameraEntity.cs" />
     <Compile Include="Entities\CameraEntity.Generated.cs">
       <DependentUpon>CameraEntity.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\DebugFeatureSettings.cs" />
-    <Compile Include="Entities\DebugFeatureSettings.Generated.cs">
-      <DependentUpon>DebugFeatureSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="Entities\Effects\MissileTrail.cs" />
     <Compile Include="Entities\Effects\MissileTrail.Generated.cs">
@@ -163,6 +160,10 @@
     <None Include="content\entities\turret\animationchainlistfile.achx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>AnimationChainListFile</Name>
+    </None>
+    <None Include="content\globalcontent\featureflags.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>FeatureFlags</Name>
     </None>
     <None Include="content\globalcontent\particles.achx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

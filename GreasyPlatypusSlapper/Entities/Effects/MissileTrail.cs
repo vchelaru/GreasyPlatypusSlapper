@@ -10,6 +10,7 @@ using FlatRedBall.Graphics.Particle;
 using FlatRedBall.Math.Geometry;
 using GreasyPlatypusSlapper.Utilities;
 using FlatRedBall.Math;
+using GreasyPlatypusSlapper.DataTypes;
 
 namespace GreasyPlatypusSlapper.Entities.Effects
 {
@@ -31,7 +32,7 @@ namespace GreasyPlatypusSlapper.Entities.Effects
 
         private void CustomInitialize()
 		{
-            if (DebugFeatureSettings.EnableRocketTrails)
+            if (GlobalContent.FeatureFlags[FeatureFlags.EnableRocketTrails].IsEnabled)
             {
                 Setup();
             }
@@ -39,7 +40,7 @@ namespace GreasyPlatypusSlapper.Entities.Effects
 
 		private void CustomActivity()
 		{
-            if(DebugFeatureSettings.EnableRocketTrails)
+            if(GlobalContent.FeatureFlags[FeatureFlags.EnableRocketTrails].IsEnabled)
             {
                 EmitTrails();
             }

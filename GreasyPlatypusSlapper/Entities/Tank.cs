@@ -8,6 +8,7 @@ using FlatRedBall.AI.Pathfinding;
 using FlatRedBall.Graphics.Animation;
 using FlatRedBall.Graphics.Particle;
 using FlatRedBall.Math.Geometry;
+using GreasyPlatypusSlapper.DataTypes;
 using Microsoft.Xna.Framework;
 using GreasyPlatypusSlapper.Factories;
 using Microsoft.Xna.Framework.Input;
@@ -84,7 +85,7 @@ namespace GreasyPlatypusSlapper.Entities
 
             shootingInput = keyboard.GetKey(Microsoft.Xna.Framework.Input.Keys.Space);
 
-            if (DebugFeatureSettings.EnableBoost)
+            if (GlobalContent.FeatureFlags[FeatureFlags.EnableBoost].IsEnabled)
             {
                 boostInput = keyboard.GetKey(Keys.Q);
             }
@@ -107,12 +108,12 @@ namespace GreasyPlatypusSlapper.Entities
 
             ShootingActivity();
 
-            if(DebugFeatureSettings.EnableTankTreads)
+            if(GlobalContent.FeatureFlags[FeatureFlags.EnableTankTreads].IsEnabled)
             {
                 TankTreadActivity();
             }
 
-            if(DebugFeatureSettings.EnableSmokeOnLowHealth)
+            if(GlobalContent.FeatureFlags[FeatureFlags.EnableSmokeOnLowHealth].IsEnabled)
             {
                 SmokeInstance.Emitting = CurrentHealthPercent < LowHealthThreshold;
             }
@@ -121,7 +122,7 @@ namespace GreasyPlatypusSlapper.Entities
 
         private void ApplyMovement()
         {
-            if (DebugFeatureSettings.EnableTurnBasedMovement)
+            if (GlobalContent.FeatureFlags[FeatureFlags.EnableTurnBasedMovement].IsEnabled)
             {
                 ApplyTurnBasedMovement();
             }
@@ -221,7 +222,7 @@ namespace GreasyPlatypusSlapper.Entities
 
 	    private void CalculateBoostModifier()
 	    {
-		    if (!DebugFeatureSettings.EnableBoost)
+		    if (!GlobalContent.FeatureFlags[FeatureFlags.EnableBoost].IsEnabled)
 		    {
 			    return;
 		    }

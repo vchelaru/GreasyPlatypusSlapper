@@ -8,6 +8,7 @@ using FlatRedBall.AI.Pathfinding;
 using FlatRedBall.Graphics.Animation;
 using FlatRedBall.Graphics.Particle;
 using FlatRedBall.Math.Geometry;
+using GreasyPlatypusSlapper.DataTypes;
 
 namespace GreasyPlatypusSlapper.Entities
 {
@@ -24,7 +25,7 @@ namespace GreasyPlatypusSlapper.Entities
         /// </summary>
 		private void CustomInitialize()
 		{
-            if(DebugFeatureSettings.EnableRocketTrails)
+            if(GlobalContent.FeatureFlags[FeatureFlags.EnableRocketTrails].IsEnabled)
             {
                 MissileTrailInstance.Emitting = true;
             }

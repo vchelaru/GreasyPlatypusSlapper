@@ -1,0 +1,6 @@
+"Name (string, required)","IsEnabled (bool, required)"
+EnableTankTreads,true
+EnableRocketTrails,true
+EnableTurnBasedMovement,true
+EnableBoost,true
+EnableSmokeOnLowHealth,true
