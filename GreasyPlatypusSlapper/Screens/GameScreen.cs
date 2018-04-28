@@ -22,6 +22,8 @@ namespace GreasyPlatypusSlapper.Screens
         TileShapeCollection solidCollision;
         TileShapeCollection roadCollision;
 
+        CollisionRelationship roadVsTankRelationship;
+
 		void CustomInitialize()
 		{
             InitializeActivity();
@@ -46,11 +48,14 @@ namespace GreasyPlatypusSlapper.Screens
             {
                 collision.Visible = true;
             }
-            var relationship = CollisionManager.Self.CreateTileRelationship(TankList, TestLevel.Collisions[0]);
+            var relationship = CollisionManager.Self.CreateTileRelationship(TankList, solidCollision);
             relationship.SetMoveCollision(0, 1);
 
             var bulletVsTank = CollisionManager.Self.CreateRelationship(TankList, BulletList);
             bulletVsTank.CollisionOccurred = HandleBulletVsTankCollision;
+
+            roadVsTankRelationship = CollisionManager.Self.CreateTileRelationship(TankList, roadCollision);
+            roadVsTankRelationship.IsActive = false;
         }
 
         private void HandleBulletVsTankCollision(Tank tank, Bullet bullet)
@@ -68,6 +73,13 @@ namespace GreasyPlatypusSlapper.Screens
             RestartActivity();
 
 #endif
+
+            CustomCollisionActivity();
+
+        }
+
+        private void CustomCollisionActivity()
+        {
 
         }
 
