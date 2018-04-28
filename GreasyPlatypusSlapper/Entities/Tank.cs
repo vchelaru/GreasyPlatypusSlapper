@@ -22,6 +22,7 @@ namespace GreasyPlatypusSlapper.Entities
         I2DInput aimingInput;
         IPressableInput shootingInput;
         double lastTreadTime;
+        float currentHealth;
 
         public int TeamIndex { get; set; }
         public float CurrentSpeed
@@ -39,8 +40,22 @@ namespace GreasyPlatypusSlapper.Entities
         /// </summary>
 		private void CustomInitialize()
 		{
+            currentHealth = MaxHealth;
             this.TurretInstance.ParentRotationChangesRotation = false;
 		}
+
+        public void ApplyDamage(float amount)
+        {
+            // only apply damage if we are healthy
+            if(currentHealth > 0)
+            {
+                currentHealth -= amount;
+                if (currentHealth <= 0)
+                {
+                    Die();
+                }
+            }
+        }
 
         public void AssignDefaultInput()
         {
@@ -56,6 +71,13 @@ namespace GreasyPlatypusSlapper.Entities
                 Microsoft.Xna.Framework.Input.Keys.Down);
 
             shootingInput = keyboard.GetKey(Microsoft.Xna.Framework.Input.Keys.Space);
+        }
+
+        public void Die()
+        {
+            // TODO: play effects
+
+            Destroy();
         }
 
         private void CustomActivity()

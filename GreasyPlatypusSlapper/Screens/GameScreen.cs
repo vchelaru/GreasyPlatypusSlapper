@@ -63,8 +63,8 @@ namespace GreasyPlatypusSlapper.Screens
         {
             if(bullet.TeamIndex != tank.TeamIndex)
             {
+                tank.ApplyDamage(bullet.Damage);
                 bullet.Destroy();
-                tank.Destroy();
             }
         }
 

@@ -44,6 +44,7 @@ namespace GreasyPlatypusSlapper.Entities
         }
         private FlatRedBall.Sprite BulletShadow;
         private GreasyPlatypusSlapper.Entities.Effects.MissileTrail MissileTrailInstance;
+        public float Damage = 50f;
         public int Index { get; set; }
         public bool Used { get; set; }
         private FlatRedBall.Math.Geometry.ShapeCollection mGeneratedCollision;
@@ -313,6 +314,7 @@ namespace GreasyPlatypusSlapper.Entities
             {
                 MissileTrailInstance.RelativeZ = 2f;
             }
+            Damage = 50f;
         }
         public virtual void ConvertToManuallyUpdated () 
         {

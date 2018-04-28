@@ -58,6 +58,7 @@ namespace GreasyPlatypusSlapper.Entities
         public float MudSpeed = 50f;
         public float RoadSpeed = 200f;
         public float TreadSpacing = 5f;
+        public float MaxHealth = 100f;
         private FlatRedBall.Math.Geometry.ShapeCollection mGeneratedCollision;
         public FlatRedBall.Math.Geometry.ShapeCollection Collision
         {
@@ -326,6 +327,7 @@ namespace GreasyPlatypusSlapper.Entities
             MudSpeed = 50f;
             RoadSpeed = 200f;
             TreadSpacing = 5f;
+            MaxHealth = 100f;
         }
         public virtual void ConvertToManuallyUpdated () 
         {
