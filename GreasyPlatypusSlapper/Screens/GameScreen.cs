@@ -14,10 +14,11 @@ using FlatRedBall.Localization;
 using FlatRedBall.Math.Collision;
 using GreasyPlatypusSlapper.Entities;
 using FlatRedBall.TileCollisions;
+using RedGrin;
 
 namespace GreasyPlatypusSlapper.Screens
 {
-	public partial class GameScreen
+	public partial class GameScreen : INetworkArena
 	{
         TileShapeCollection solidCollision;
         TileShapeCollection roadCollision;
@@ -103,5 +104,16 @@ namespace GreasyPlatypusSlapper.Screens
 
         }
 
-	}
+        // TODO: Create a NetworkController entity
+        public INetworkEntity RequestCreateEntity(long ownerId, long entityId, object entityData)
+        {
+            throw new NotImplementedException();
+        }
+
+        // TODO: Destroy a NetworkController entity by id
+        public void RequestDestroyEntity(INetworkEntity entity)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
