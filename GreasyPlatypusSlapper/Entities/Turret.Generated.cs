@@ -93,7 +93,16 @@ namespace GreasyPlatypusSlapper.Entities
                 SpriteInstance.CopyAbsoluteToRelative();
                 SpriteInstance.AttachTo(this, false);
             }
+            if (SpriteInstance.Parent == null)
+            {
+                SpriteInstance.X = 3f;
+            }
+            else
+            {
+                SpriteInstance.RelativeX = 3f;
+            }
             SpriteInstance.TextureScale = 1f;
+            SpriteInstance.UseAnimationRelativePosition = false;
             SpriteInstance.AnimationChains = AnimationChainListFile;
             SpriteInstance.CurrentChainName = "OrangeTurret";
             FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = oldShapeManagerSuppressAdd;
@@ -115,7 +124,16 @@ namespace GreasyPlatypusSlapper.Entities
             if (callOnContainedElements)
             {
             }
+            if (SpriteInstance.Parent == null)
+            {
+                SpriteInstance.X = 3f;
+            }
+            else
+            {
+                SpriteInstance.RelativeX = 3f;
+            }
             SpriteInstance.TextureScale = 1f;
+            SpriteInstance.UseAnimationRelativePosition = false;
             SpriteInstance.AnimationChains = AnimationChainListFile;
             SpriteInstance.CurrentChainName = "OrangeTurret";
         }
