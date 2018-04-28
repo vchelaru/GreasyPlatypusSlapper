@@ -36,4 +36,15 @@
       <BottomCoordinate>672</BottomCoordinate>
     </Frame>
   </AnimationChain>
+  <AnimationChain>
+    <Name>TankShadow</Name>
+    <Frame>
+      <TextureName>../../globalcontent/spritesheet.png</TextureName>
+      <FrameLength>0.1</FrameLength>
+      <LeftCoordinate>32</LeftCoordinate>
+      <RightCoordinate>64</RightCoordinate>
+      <TopCoordinate>768</TopCoordinate>
+      <BottomCoordinate>800</BottomCoordinate>
+    </Frame>
+  </AnimationChain>
 </AnimationChainArraySave>
