@@ -13,11 +13,14 @@ using FlatRedBall.Math.Geometry;
 using FlatRedBall.Localization;
 using FlatRedBall.Math.Collision;
 using GreasyPlatypusSlapper.Entities;
+using FlatRedBall.TileCollisions;
 
 namespace GreasyPlatypusSlapper.Screens
 {
 	public partial class GameScreen
 	{
+        TileShapeCollection solidCollision;
+        TileShapeCollection roadCollision;
 
 		void CustomInitialize()
 		{
@@ -31,11 +34,18 @@ namespace GreasyPlatypusSlapper.Screens
 
         private void InitializeActivity()
         {
-            foreach(var collision in TestLevel.Collisions)
+            InitializeCollision();
+
+        }
+
+        private void InitializeCollision()
+        {
+            solidCollision = TestLevel.Collisions.FirstOrDefault(item => item.Name == "Tiles");
+            roadCollision = TestLevel.Collisions.FirstOrDefault(item => item.Name == "RoadTiles");
+            foreach (var collision in TestLevel.Collisions)
             {
                 collision.Visible = true;
             }
-
             var relationship = CollisionManager.Self.CreateTileRelationship(TankList, TestLevel.Collisions[0]);
             relationship.SetMoveCollision(0, 1);
 
