@@ -5,6 +5,7 @@ using Color = Microsoft.Xna.Framework.Color;
 using GreasyPlatypusSlapper.Screens;
 using FlatRedBall.Graphics;
 using FlatRedBall.Math;
+using GreasyPlatypusSlapper.Performance;
 using GreasyPlatypusSlapper.Entities;
 using GreasyPlatypusSlapper.Entities.Effects;
 using GreasyPlatypusSlapper.Factories;
@@ -16,7 +17,7 @@ using System.Text;
 using FlatRedBall.Math.Geometry;
 namespace GreasyPlatypusSlapper.Entities
 {
-    public partial class Tank : FlatRedBall.PositionedObject, FlatRedBall.Graphics.IDestroyable, FlatRedBall.Math.Geometry.ICollidable
+    public partial class Tank : FlatRedBall.PositionedObject, FlatRedBall.Graphics.IDestroyable, FlatRedBall.Performance.IPoolable, FlatRedBall.Math.Geometry.ICollidable
     {
         // This is made static so that static lazy-loaded content can access it.
         public static string ContentManagerName { get; set; }
@@ -66,6 +67,8 @@ namespace GreasyPlatypusSlapper.Entities
         public float BoostPenaltyDurationInSeconds = 1f;
         public float LowHealthThreshold = 0.3f;
         public float BoostSpeedMultiplier = 5f;
+        public int Index { get; set; }
+        public bool Used { get; set; }
         private FlatRedBall.Math.Geometry.ShapeCollection mGeneratedCollision;
         public FlatRedBall.Math.Geometry.ShapeCollection Collision
         {
@@ -140,15 +143,19 @@ namespace GreasyPlatypusSlapper.Entities
         }
         public virtual void Destroy () 
         {
+            if (Used)
+            {
+                Factories.TankFactory.MakeUnused(this, false);
+            }
             FlatRedBall.SpriteManager.RemovePositionedObject(this);
             
             if (SpriteInstance != null)
             {
-                FlatRedBall.SpriteManager.RemoveSprite(SpriteInstance);
+                FlatRedBall.SpriteManager.RemoveSpriteOneWay(SpriteInstance);
             }
             if (CircleInstance != null)
             {
-                FlatRedBall.Math.Geometry.ShapeManager.Remove(CircleInstance);
+                FlatRedBall.Math.Geometry.ShapeManager.RemoveOneWay(CircleInstance);
             }
             if (TurretInstance != null)
             {
@@ -157,7 +164,7 @@ namespace GreasyPlatypusSlapper.Entities
             }
             if (TankShadow != null)
             {
-                FlatRedBall.SpriteManager.RemoveSprite(TankShadow);
+                FlatRedBall.SpriteManager.RemoveSpriteOneWay(TankShadow);
             }
             if (SmokeInstance != null)
             {
@@ -407,6 +414,12 @@ namespace GreasyPlatypusSlapper.Entities
                 throw new System.ArgumentException("contentManagerName cannot be empty or null");
             }
             ContentManagerName = contentManagerName;
+            // Set the content manager for Gum
+            var contentManagerWrapper = new FlatRedBall.Gum.ContentManagerWrapper();
+            contentManagerWrapper.ContentManagerName = contentManagerName;
+            RenderingLibrary.Content.LoaderManager.Self.ContentLoader = contentManagerWrapper;
+            // Access the GumProject just in case it's async loaded
+            var throwaway = GlobalContent.GumProject;
             #if DEBUG
             if (contentManagerName == FlatRedBall.FlatRedBallServices.GlobalContentManager)
             {

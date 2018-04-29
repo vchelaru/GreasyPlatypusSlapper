@@ -19,13 +19,13 @@ namespace GreasyPlatypusSlapper.Screens
         static bool HasBeenLoadedWithGlobalContentManager = false;
         #endif
         protected static FlatRedBall.TileGraphics.LayeredTileMap TestLevel;
+        protected static FlatRedBall.Gum.GumIdb GameScreenGum;
         
         private FlatRedBall.Math.PositionedObjectList<GreasyPlatypusSlapper.Entities.Tank> TankList;
-        private GreasyPlatypusSlapper.Entities.Tank Tank1Test;
-        private GreasyPlatypusSlapper.Entities.Tank Tank2Test;
         private FlatRedBall.Math.PositionedObjectList<GreasyPlatypusSlapper.Entities.Bullet> BulletList;
         private GreasyPlatypusSlapper.Entities.CameraEntity CameraEntityInstance;
         private FlatRedBall.Math.PositionedObjectList<GreasyPlatypusSlapper.Entities.Effects.TreadEffect> TreadEffects;
+        private GreasyPlatypusSlapper.GumRuntimes.PlayerSelectionUIRuntime PlayerSelectionUIInstance;
         public GameScreen () 
         	: base ("GameScreen")
         {
@@ -35,16 +35,13 @@ namespace GreasyPlatypusSlapper.Screens
             LoadStaticContent(ContentManagerName);
             TankList = new FlatRedBall.Math.PositionedObjectList<GreasyPlatypusSlapper.Entities.Tank>();
             TankList.Name = "TankList";
-            Tank1Test = new GreasyPlatypusSlapper.Entities.Tank(ContentManagerName, false);
-            Tank1Test.Name = "Tank1Test";
-            Tank2Test = new GreasyPlatypusSlapper.Entities.Tank(ContentManagerName, false);
-            Tank2Test.Name = "Tank2Test";
             BulletList = new FlatRedBall.Math.PositionedObjectList<GreasyPlatypusSlapper.Entities.Bullet>();
             BulletList.Name = "BulletList";
             CameraEntityInstance = new GreasyPlatypusSlapper.Entities.CameraEntity(ContentManagerName, false);
             CameraEntityInstance.Name = "CameraEntityInstance";
             TreadEffects = new FlatRedBall.Math.PositionedObjectList<GreasyPlatypusSlapper.Entities.Effects.TreadEffect>();
             TreadEffects.Name = "TreadEffects";
+            PlayerSelectionUIInstance = GameScreenGum.GetGraphicalUiElementByName("PlayerSelectionUIInstance") as GreasyPlatypusSlapper.GumRuntimes.PlayerSelectionUIRuntime;
             
             
             PostInitialize();
@@ -57,12 +54,13 @@ namespace GreasyPlatypusSlapper.Screens
         public override void AddToManagers () 
         {
             TestLevel.AddToManagers(mLayer);
+            GameScreenGum.InstanceInitialize(); FlatRedBall.FlatRedBallServices.GraphicsOptions.SizeOrOrientationChanged += GameScreenGum.HandleResolutionChanged;
+            Factories.TankFactory.Initialize(ContentManagerName);
             Factories.BulletFactory.Initialize(ContentManagerName);
             Factories.TreadEffectFactory.Initialize(ContentManagerName);
+            Factories.TankFactory.AddList(TankList);
             Factories.BulletFactory.AddList(BulletList);
             Factories.TreadEffectFactory.AddList(TreadEffects);
-            Tank1Test.AddToManagers(mLayer);
-            Tank2Test.AddToManagers(mLayer);
             CameraEntityInstance.AddToManagers(mLayer);
             base.AddToManagers();
             AddToManagersBottomUp();
@@ -111,10 +109,13 @@ namespace GreasyPlatypusSlapper.Screens
         public override void Destroy () 
         {
             base.Destroy();
+            Factories.TankFactory.Destroy();
             Factories.BulletFactory.Destroy();
             Factories.TreadEffectFactory.Destroy();
             TestLevel.Destroy();
             TestLevel = null;
+            FlatRedBall.SpriteManager.RemoveDrawableBatch(GameScreenGum); FlatRedBall.FlatRedBallServices.GraphicsOptions.SizeOrOrientationChanged -= GameScreenGum.HandleResolutionChanged;
+            GameScreenGum = null;
             
             TankList.MakeOneWay();
             BulletList.MakeOneWay();
@@ -136,6 +137,10 @@ namespace GreasyPlatypusSlapper.Screens
             {
                 TreadEffects[i].Destroy();
             }
+            if (PlayerSelectionUIInstance != null)
+            {
+                PlayerSelectionUIInstance.RemoveFromManagers();
+            }
             TankList.MakeTwoWay();
             BulletList.MakeTwoWay();
             TreadEffects.MakeTwoWay();
@@ -146,57 +151,6 @@ namespace GreasyPlatypusSlapper.Screens
         {
             bool oldShapeManagerSuppressAdd = FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue;
             FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = true;
-            TankList.Add(Tank1Test);
-            if (Tank1Test.Parent == null)
-            {
-                Tank1Test.X = 200f;
-            }
-            else
-            {
-                Tank1Test.RelativeX = 200f;
-            }
-            if (Tank1Test.Parent == null)
-            {
-                Tank1Test.Y = -200f;
-            }
-            else
-            {
-                Tank1Test.RelativeY = -200f;
-            }
-            if (Tank1Test.Parent == null)
-            {
-                Tank1Test.Z = 1f;
-            }
-            else
-            {
-                Tank1Test.RelativeZ = 1f;
-            }
-            TankList.Add(Tank2Test);
-            if (Tank2Test.Parent == null)
-            {
-                Tank2Test.X = 400f;
-            }
-            else
-            {
-                Tank2Test.RelativeX = 400f;
-            }
-            if (Tank2Test.Parent == null)
-            {
-                Tank2Test.Y = -200f;
-            }
-            else
-            {
-                Tank2Test.RelativeY = -200f;
-            }
-            if (Tank2Test.Parent == null)
-            {
-                Tank2Test.Z = 1f;
-            }
-            else
-            {
-                Tank2Test.RelativeZ = 1f;
-            }
-            Tank2Test.SpriteInstanceCurrentChainName = "GrayBody";
             FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = oldShapeManagerSuppressAdd;
         }
         public virtual void AddToManagersBottomUp () 
@@ -219,64 +173,17 @@ namespace GreasyPlatypusSlapper.Screens
             {
                 TreadEffects[i].Destroy();
             }
+            if (PlayerSelectionUIInstance != null)
+            {
+                PlayerSelectionUIInstance.RemoveFromManagers();
+            }
         }
         public virtual void AssignCustomVariables (bool callOnContainedElements) 
         {
             if (callOnContainedElements)
             {
-                Tank1Test.AssignCustomVariables(true);
-                Tank2Test.AssignCustomVariables(true);
                 CameraEntityInstance.AssignCustomVariables(true);
             }
-            if (Tank1Test.Parent == null)
-            {
-                Tank1Test.X = 200f;
-            }
-            else
-            {
-                Tank1Test.RelativeX = 200f;
-            }
-            if (Tank1Test.Parent == null)
-            {
-                Tank1Test.Y = -200f;
-            }
-            else
-            {
-                Tank1Test.RelativeY = -200f;
-            }
-            if (Tank1Test.Parent == null)
-            {
-                Tank1Test.Z = 1f;
-            }
-            else
-            {
-                Tank1Test.RelativeZ = 1f;
-            }
-            if (Tank2Test.Parent == null)
-            {
-                Tank2Test.X = 400f;
-            }
-            else
-            {
-                Tank2Test.RelativeX = 400f;
-            }
-            if (Tank2Test.Parent == null)
-            {
-                Tank2Test.Y = -200f;
-            }
-            else
-            {
-                Tank2Test.RelativeY = -200f;
-            }
-            if (Tank2Test.Parent == null)
-            {
-                Tank2Test.Z = 1f;
-            }
-            else
-            {
-                Tank2Test.RelativeZ = 1f;
-            }
-            Tank2Test.SpriteInstanceCurrentChainName = "GrayBody";
         }
         public virtual void ConvertToManuallyUpdated () 
         {
@@ -300,6 +207,12 @@ namespace GreasyPlatypusSlapper.Screens
             {
                 throw new System.ArgumentException("contentManagerName cannot be empty or null");
             }
+            // Set the content manager for Gum
+            var contentManagerWrapper = new FlatRedBall.Gum.ContentManagerWrapper();
+            contentManagerWrapper.ContentManagerName = contentManagerName;
+            RenderingLibrary.Content.LoaderManager.Self.ContentLoader = contentManagerWrapper;
+            // Access the GumProject just in case it's async loaded
+            var throwaway = GlobalContent.GumProject;
             #if DEBUG
             if (contentManagerName == FlatRedBall.FlatRedBallServices.GlobalContentManager)
             {
@@ -311,6 +224,7 @@ namespace GreasyPlatypusSlapper.Screens
             }
             #endif
             TestLevel = FlatRedBall.TileGraphics.LayeredTileMap.FromTiledMapSave("content/screens/gamescreen/levels/testlevel.tmx", contentManagerName);
+            Gum.Wireframe.GraphicalUiElement.IsAllLayoutSuspended = true;  GameScreenGum = new FlatRedBall.Gum.GumIdb();  GameScreenGum.LoadFromFile("content/gumproject/screens/gamescreengum.gusx");  GameScreenGum.AssignReferences();Gum.Wireframe.GraphicalUiElement.IsAllLayoutSuspended = false; GameScreenGum.Element.UpdateLayout(); GameScreenGum.Element.UpdateLayout();
             GreasyPlatypusSlapper.Entities.CameraEntity.LoadStaticContent(contentManagerName);
             CustomLoadStaticContent(contentManagerName);
         }
@@ -321,6 +235,8 @@ namespace GreasyPlatypusSlapper.Screens
             {
                 case  "TestLevel":
                     return TestLevel;
+                case  "GameScreenGum":
+                    return GameScreenGum;
             }
             return null;
         }
@@ -330,6 +246,8 @@ namespace GreasyPlatypusSlapper.Screens
             {
                 case  "TestLevel":
                     return TestLevel;
+                case  "GameScreenGum":
+                    return GameScreenGum;
             }
             return null;
         }
@@ -339,6 +257,8 @@ namespace GreasyPlatypusSlapper.Screens
             {
                 case  "TestLevel":
                     return TestLevel;
+                case  "GameScreenGum":
+                    return GameScreenGum;
             }
             return null;
         }

@@ -33,29 +33,31 @@ namespace GreasyPlatypusSlapper.Entities
 
 		private void CustomActivity()
 		{
-
             CameraActivity();
 		}
 
         private void CameraActivity()
         {
-            float minX = float.PositiveInfinity;
-            float maxX = float.NegativeInfinity;
+			if (ObjectsWatching.Count > 0)
+			{
+				float minX = float.PositiveInfinity;
+				float maxX = float.NegativeInfinity;
 
-            float minY = float.PositiveInfinity;
-            float maxY = float.NegativeInfinity;
+				float minY = float.PositiveInfinity;
+				float maxY = float.NegativeInfinity;
 
-            foreach(var item in ObjectsWatching)
-            {
-                minX = System.Math.Min(minX, item.X);
-                minY = System.Math.Min(minY, item.Y);
+				foreach (var item in ObjectsWatching)
+				{
+					minX = System.Math.Min(minX, item.X);
+					minY = System.Math.Min(minY, item.Y);
 
-                maxX = System.Math.Max(maxX, item.X);
-                maxY = System.Math.Max(maxY, item.Y);
-            }
+					maxX = System.Math.Max(maxX, item.X);
+					maxY = System.Math.Max(maxY, item.Y);
+				}
 
-            Camera.Main.X = (minX + maxX) / 2.0f;
-            Camera.Main.Y = (minY + maxY) / 2.0f;
+				Camera.Main.X = (minX + maxX) / 2.0f;
+				Camera.Main.Y = (minY + maxY) / 2.0f;
+			}
         }
 
         private void CustomDestroy()
