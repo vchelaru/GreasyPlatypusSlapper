@@ -676,6 +676,74 @@
         <string>GLUE</string>
       </Tags>
       <Source>GLUE</Source>
+      <StateCategoryList>
+        <StateSaveCategory>
+          <States>
+            <StateSave>
+              <InstructionSaves>
+                <InstructionSave>
+                  <Type>String</Type>
+                  <Member>SpriteInstanceCurrentChainName</Member>
+                  <ValueAsString>OrangeBody</ValueAsString>
+                </InstructionSave>
+                <InstructionSave>
+                  <Type>String</Type>
+                  <Member>TurretInstanceCurrentTurretColorState</Member>
+                  <ValueAsString>Orange</ValueAsString>
+                </InstructionSave>
+              </InstructionSaves>
+              <Name>Orange</Name>
+            </StateSave>
+            <StateSave>
+              <InstructionSaves>
+                <InstructionSave>
+                  <Type>String</Type>
+                  <Member>SpriteInstanceCurrentChainName</Member>
+                  <ValueAsString>RedBody</ValueAsString>
+                </InstructionSave>
+                <InstructionSave>
+                  <Type>String</Type>
+                  <Member>TurretInstanceCurrentTurretColorState</Member>
+                  <ValueAsString>Red</ValueAsString>
+                </InstructionSave>
+              </InstructionSaves>
+              <Name>Red</Name>
+            </StateSave>
+            <StateSave>
+              <InstructionSaves>
+                <InstructionSave>
+                  <Type>String</Type>
+                  <Member>SpriteInstanceCurrentChainName</Member>
+                  <ValueAsString>GreenBody</ValueAsString>
+                </InstructionSave>
+                <InstructionSave>
+                  <Type>String</Type>
+                  <Member>TurretInstanceCurrentTurretColorState</Member>
+                  <ValueAsString>Green</ValueAsString>
+                </InstructionSave>
+              </InstructionSaves>
+              <Name>Green</Name>
+            </StateSave>
+            <StateSave>
+              <InstructionSaves>
+                <InstructionSave>
+                  <Type>String</Type>
+                  <Member>SpriteInstanceCurrentChainName</Member>
+                  <ValueAsString>OliveBody</ValueAsString>
+                </InstructionSave>
+                <InstructionSave>
+                  <Type>String</Type>
+                  <Member>TurretInstanceCurrentTurretColorState</Member>
+                  <ValueAsString>Olive</ValueAsString>
+                </InstructionSave>
+              </InstructionSaves>
+              <Name>Olive</Name>
+            </StateSave>
+          </States>
+          <Name>TankColor</Name>
+          <SharesVariablesWithOtherCategories>false</SharesVariablesWithOtherCategories>
+        </StateSaveCategory>
+      </StateCategoryList>
       <CustomVariables>
         <CustomVariable>
           <Properties>
@@ -841,6 +909,18 @@
           <Type>float</Type>
           <DefaultValue xsi:type="xsd:float">5</DefaultValue>
         </CustomVariable>
+        <CustomVariable>
+          <Properties>
+            <PropertySave>
+              <Name>Type</Name>
+              <ValueAsString>TurretColor</ValueAsString>
+            </PropertySave>
+          </Properties>
+          <Name>TurretInstanceCurrentTurretColorState</Name>
+          <Type>TurretColor</Type>
+          <SourceObject>TurretInstance</SourceObject>
+          <SourceObjectProperty>CurrentTurretColorState</SourceObjectProperty>
+        </CustomVariable>
       </CustomVariables>
       <ImplementsIDrawableBatch>false</ImplementsIDrawableBatch>
       <Name>Entities\Tank</Name>
@@ -995,6 +1075,30 @@
         <string>GLUE</string>
       </Tags>
       <Source>GLUE</Source>
+      <StateCategoryList>
+        <StateSaveCategory>
+          <States>
+            <StateSave>
+              <InstructionSaves />
+              <Name>Orange</Name>
+            </StateSave>
+            <StateSave>
+              <InstructionSaves />
+              <Name>Red</Name>
+            </StateSave>
+            <StateSave>
+              <InstructionSaves />
+              <Name>Green</Name>
+            </StateSave>
+            <StateSave>
+              <InstructionSaves />
+              <Name>Olive</Name>
+            </StateSave>
+          </States>
+          <Name>TurretColor</Name>
+          <SharesVariablesWithOtherCategories>false</SharesVariablesWithOtherCategories>
+        </StateSaveCategory>
+      </StateCategoryList>
       <CustomVariables>
         <CustomVariable>
           <Properties>

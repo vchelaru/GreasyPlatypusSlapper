@@ -20,5 +20,6 @@
     <property name="BoostPenaltyDurationInSeconds" type="float" default="1" />
     <property name="LowHealthThreshold" type="float" default="0.3" />
     <property name="BoostSpeedMultiplier" type="float" default="5" />
+    <property name="TurretInstanceCurrentTurretColorState" type="TurretColor" />
   </objecttype>
 </objecttypes>

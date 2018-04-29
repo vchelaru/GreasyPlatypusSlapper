@@ -22,6 +22,49 @@ namespace GreasyPlatypusSlapper.Entities
         #if DEBUG
         static bool HasBeenLoadedWithGlobalContentManager = false;
         #endif
+        public enum TurretColor
+        {
+            Uninitialized = 0, //This exists so that the first set call actually does something
+            Unknown = 1, //This exists so that if the entity is actually a child entity and has set a child state, you will get this
+            Orange = 2, 
+            Red = 3, 
+            Green = 4, 
+            Olive = 5
+        }
+        protected int mCurrentTurretColorState = 0;
+        public Entities.Turret.TurretColor CurrentTurretColorState
+        {
+            get
+            {
+                if (mCurrentTurretColorState >= 0 && mCurrentTurretColorState <= 5)
+                {
+                    return (TurretColor)mCurrentTurretColorState;
+                }
+                else
+                {
+                    return TurretColor.Unknown;
+                }
+            }
+            set
+            {
+                mCurrentTurretColorState = (int)value;
+                switch(CurrentTurretColorState)
+                {
+                    case  TurretColor.Uninitialized:
+                        break;
+                    case  TurretColor.Unknown:
+                        break;
+                    case  TurretColor.Orange:
+                        break;
+                    case  TurretColor.Red:
+                        break;
+                    case  TurretColor.Green:
+                        break;
+                    case  TurretColor.Olive:
+                        break;
+                }
+            }
+        }
         static object mLockObject = new object();
         static System.Collections.Generic.List<string> mRegisteredUnloads = new System.Collections.Generic.List<string>();
         static System.Collections.Generic.List<string> LoadedContentManagers = new System.Collections.Generic.List<string>();
@@ -210,6 +253,93 @@ namespace GreasyPlatypusSlapper.Entities
                 {
                     AnimationChainListFile= null;
                 }
+            }
+        }
+        public FlatRedBall.Instructions.Instruction InterpolateToState (TurretColor stateToInterpolateTo, double secondsToTake) 
+        {
+            switch(stateToInterpolateTo)
+            {
+                case  TurretColor.Orange:
+                    break;
+                case  TurretColor.Red:
+                    break;
+                case  TurretColor.Green:
+                    break;
+                case  TurretColor.Olive:
+                    break;
+            }
+            var instruction = new FlatRedBall.Instructions.DelegateInstruction<TurretColor>(StopStateInterpolation, stateToInterpolateTo);
+            instruction.TimeToExecute = FlatRedBall.TimeManager.CurrentTime + secondsToTake;
+            this.Instructions.Add(instruction);
+            return instruction;
+        }
+        public void StopStateInterpolation (TurretColor stateToStop) 
+        {
+            switch(stateToStop)
+            {
+                case  TurretColor.Orange:
+                    break;
+                case  TurretColor.Red:
+                    break;
+                case  TurretColor.Green:
+                    break;
+                case  TurretColor.Olive:
+                    break;
+            }
+            CurrentTurretColorState = stateToStop;
+        }
+        public void InterpolateBetween (TurretColor firstState, TurretColor secondState, float interpolationValue) 
+        {
+            #if DEBUG
+            if (float.IsNaN(interpolationValue))
+            {
+                throw new System.Exception("interpolationValue cannot be NaN");
+            }
+            #endif
+            switch(firstState)
+            {
+                case  TurretColor.Orange:
+                    break;
+                case  TurretColor.Red:
+                    break;
+                case  TurretColor.Green:
+                    break;
+                case  TurretColor.Olive:
+                    break;
+            }
+            switch(secondState)
+            {
+                case  TurretColor.Orange:
+                    break;
+                case  TurretColor.Red:
+                    break;
+                case  TurretColor.Green:
+                    break;
+                case  TurretColor.Olive:
+                    break;
+            }
+            if (interpolationValue < 1)
+            {
+                mCurrentTurretColorState = (int)firstState;
+            }
+            else
+            {
+                mCurrentTurretColorState = (int)secondState;
+            }
+        }
+        public static void PreloadStateContent (TurretColor state, string contentManagerName) 
+        {
+            ContentManagerName = contentManagerName;
+            switch(state)
+            {
+                case  TurretColor.Orange:
+                    break;
+                case  TurretColor.Red:
+                    break;
+                case  TurretColor.Green:
+                    break;
+                case  TurretColor.Olive:
+                    break;
             }
         }
         [System.Obsolete("Use GetFile instead")]

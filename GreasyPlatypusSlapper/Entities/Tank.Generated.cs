@@ -24,6 +24,57 @@ namespace GreasyPlatypusSlapper.Entities
         #if DEBUG
         static bool HasBeenLoadedWithGlobalContentManager = false;
         #endif
+        public enum TankColor
+        {
+            Uninitialized = 0, //This exists so that the first set call actually does something
+            Unknown = 1, //This exists so that if the entity is actually a child entity and has set a child state, you will get this
+            Orange = 2, 
+            Red = 3, 
+            Green = 4, 
+            Olive = 5
+        }
+        protected int mCurrentTankColorState = 0;
+        public Entities.Tank.TankColor CurrentTankColorState
+        {
+            get
+            {
+                if (mCurrentTankColorState >= 0 && mCurrentTankColorState <= 5)
+                {
+                    return (TankColor)mCurrentTankColorState;
+                }
+                else
+                {
+                    return TankColor.Unknown;
+                }
+            }
+            set
+            {
+                mCurrentTankColorState = (int)value;
+                switch(CurrentTankColorState)
+                {
+                    case  TankColor.Uninitialized:
+                        break;
+                    case  TankColor.Unknown:
+                        break;
+                    case  TankColor.Orange:
+                        SpriteInstanceCurrentChainName = "OrangeBody";
+                        TurretInstanceCurrentTurretColorState = GreasyPlatypusSlapper.Entities.Turret.TurretColor.Orange;
+                        break;
+                    case  TankColor.Red:
+                        SpriteInstanceCurrentChainName = "RedBody";
+                        TurretInstanceCurrentTurretColorState = GreasyPlatypusSlapper.Entities.Turret.TurretColor.Red;
+                        break;
+                    case  TankColor.Green:
+                        SpriteInstanceCurrentChainName = "GreenBody";
+                        TurretInstanceCurrentTurretColorState = GreasyPlatypusSlapper.Entities.Turret.TurretColor.Green;
+                        break;
+                    case  TankColor.Olive:
+                        SpriteInstanceCurrentChainName = "OliveBody";
+                        TurretInstanceCurrentTurretColorState = GreasyPlatypusSlapper.Entities.Turret.TurretColor.Olive;
+                        break;
+                }
+            }
+        }
         static object mLockObject = new object();
         static System.Collections.Generic.List<string> mRegisteredUnloads = new System.Collections.Generic.List<string>();
         static System.Collections.Generic.List<string> LoadedContentManagers = new System.Collections.Generic.List<string>();
@@ -67,6 +118,17 @@ namespace GreasyPlatypusSlapper.Entities
         public float BoostPenaltyDurationInSeconds = 1f;
         public float LowHealthThreshold = 0.3f;
         public float BoostSpeedMultiplier = 5f;
+        public Entities.Turret.TurretColor TurretInstanceCurrentTurretColorState
+        {
+            get
+            {
+                return TurretInstance.CurrentTurretColorState;
+            }
+            set
+            {
+                TurretInstance.CurrentTurretColorState = value;
+            }
+        }
         public int Index { get; set; }
         public bool Used { get; set; }
         private FlatRedBall.Math.Geometry.ShapeCollection mGeneratedCollision;
@@ -476,6 +538,168 @@ namespace GreasyPlatypusSlapper.Entities
                 {
                     AnimationChainListFile= null;
                 }
+            }
+        }
+        public FlatRedBall.Instructions.Instruction InterpolateToState (TankColor stateToInterpolateTo, double secondsToTake) 
+        {
+            switch(stateToInterpolateTo)
+            {
+                case  TankColor.Orange:
+                    TurretInstance.InterpolateToState(GreasyPlatypusSlapper.Entities.Turret.TurretColor.Orange, secondsToTake);
+                    break;
+                case  TankColor.Red:
+                    TurretInstance.InterpolateToState(GreasyPlatypusSlapper.Entities.Turret.TurretColor.Red, secondsToTake);
+                    break;
+                case  TankColor.Green:
+                    TurretInstance.InterpolateToState(GreasyPlatypusSlapper.Entities.Turret.TurretColor.Green, secondsToTake);
+                    break;
+                case  TankColor.Olive:
+                    TurretInstance.InterpolateToState(GreasyPlatypusSlapper.Entities.Turret.TurretColor.Olive, secondsToTake);
+                    break;
+            }
+            var instruction = new FlatRedBall.Instructions.DelegateInstruction<TankColor>(StopStateInterpolation, stateToInterpolateTo);
+            instruction.TimeToExecute = FlatRedBall.TimeManager.CurrentTime + secondsToTake;
+            this.Instructions.Add(instruction);
+            return instruction;
+        }
+        public void StopStateInterpolation (TankColor stateToStop) 
+        {
+            switch(stateToStop)
+            {
+                case  TankColor.Orange:
+                    break;
+                case  TankColor.Red:
+                    break;
+                case  TankColor.Green:
+                    break;
+                case  TankColor.Olive:
+                    break;
+            }
+            CurrentTankColorState = stateToStop;
+        }
+        public void InterpolateBetween (TankColor firstState, TankColor secondState, float interpolationValue) 
+        {
+            #if DEBUG
+            if (float.IsNaN(interpolationValue))
+            {
+                throw new System.Exception("interpolationValue cannot be NaN");
+            }
+            #endif
+            bool setTurretInstanceCurrentTurretColorState = true;
+            Entities.Turret.TurretColor TurretInstanceCurrentTurretColorStateFirstValue= GreasyPlatypusSlapper.Entities.Turret.TurretColor.Orange;
+            Entities.Turret.TurretColor TurretInstanceCurrentTurretColorStateSecondValue= GreasyPlatypusSlapper.Entities.Turret.TurretColor.Orange;
+            switch(firstState)
+            {
+                case  TankColor.Orange:
+                    if (interpolationValue < 1)
+                    {
+                        this.SpriteInstanceCurrentChainName = "OrangeBody";
+                    }
+                    TurretInstanceCurrentTurretColorStateFirstValue = GreasyPlatypusSlapper.Entities.Turret.TurretColor.Orange;
+                    break;
+                case  TankColor.Red:
+                    if (interpolationValue < 1)
+                    {
+                        this.SpriteInstanceCurrentChainName = "RedBody";
+                    }
+                    TurretInstanceCurrentTurretColorStateFirstValue = GreasyPlatypusSlapper.Entities.Turret.TurretColor.Red;
+                    break;
+                case  TankColor.Green:
+                    if (interpolationValue < 1)
+                    {
+                        this.SpriteInstanceCurrentChainName = "GreenBody";
+                    }
+                    TurretInstanceCurrentTurretColorStateFirstValue = GreasyPlatypusSlapper.Entities.Turret.TurretColor.Green;
+                    break;
+                case  TankColor.Olive:
+                    if (interpolationValue < 1)
+                    {
+                        this.SpriteInstanceCurrentChainName = "OliveBody";
+                    }
+                    TurretInstanceCurrentTurretColorStateFirstValue = GreasyPlatypusSlapper.Entities.Turret.TurretColor.Olive;
+                    break;
+            }
+            switch(secondState)
+            {
+                case  TankColor.Orange:
+                    if (interpolationValue >= 1)
+                    {
+                        this.SpriteInstanceCurrentChainName = "OrangeBody";
+                    }
+                    TurretInstanceCurrentTurretColorStateSecondValue = GreasyPlatypusSlapper.Entities.Turret.TurretColor.Orange;
+                    break;
+                case  TankColor.Red:
+                    if (interpolationValue >= 1)
+                    {
+                        this.SpriteInstanceCurrentChainName = "RedBody";
+                    }
+                    TurretInstanceCurrentTurretColorStateSecondValue = GreasyPlatypusSlapper.Entities.Turret.TurretColor.Red;
+                    break;
+                case  TankColor.Green:
+                    if (interpolationValue >= 1)
+                    {
+                        this.SpriteInstanceCurrentChainName = "GreenBody";
+                    }
+                    TurretInstanceCurrentTurretColorStateSecondValue = GreasyPlatypusSlapper.Entities.Turret.TurretColor.Green;
+                    break;
+                case  TankColor.Olive:
+                    if (interpolationValue >= 1)
+                    {
+                        this.SpriteInstanceCurrentChainName = "OliveBody";
+                    }
+                    TurretInstanceCurrentTurretColorStateSecondValue = GreasyPlatypusSlapper.Entities.Turret.TurretColor.Olive;
+                    break;
+            }
+            if (setTurretInstanceCurrentTurretColorState)
+            {
+                TurretInstance.InterpolateBetween(TurretInstanceCurrentTurretColorStateFirstValue, TurretInstanceCurrentTurretColorStateSecondValue, interpolationValue);
+            }
+            if (interpolationValue < 1)
+            {
+                mCurrentTankColorState = (int)firstState;
+            }
+            else
+            {
+                mCurrentTankColorState = (int)secondState;
+            }
+        }
+        public static void PreloadStateContent (TankColor state, string contentManagerName) 
+        {
+            ContentManagerName = contentManagerName;
+            switch(state)
+            {
+                case  TankColor.Orange:
+                    {
+                        object throwaway = "OrangeBody";
+                    }
+                    {
+                        object throwaway = GreasyPlatypusSlapper.Entities.Turret.TurretColor.Orange;
+                    }
+                    break;
+                case  TankColor.Red:
+                    {
+                        object throwaway = "RedBody";
+                    }
+                    {
+                        object throwaway = GreasyPlatypusSlapper.Entities.Turret.TurretColor.Red;
+                    }
+                    break;
+                case  TankColor.Green:
+                    {
+                        object throwaway = "GreenBody";
+                    }
+                    {
+                        object throwaway = GreasyPlatypusSlapper.Entities.Turret.TurretColor.Green;
+                    }
+                    break;
+                case  TankColor.Olive:
+                    {
+                        object throwaway = "OliveBody";
+                    }
+                    {
+                        object throwaway = GreasyPlatypusSlapper.Entities.Turret.TurretColor.Olive;
+                    }
+                    break;
             }
         }
         [System.Obsolete("Use GetFile instead")]

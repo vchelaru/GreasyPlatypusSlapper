@@ -4,6 +4,7 @@
   <AnimationChainSettings />
   <ExpandedNode>OrangeBody</ExpandedNode>
   <ExpandedNode>RedBody</ExpandedNode>
-  <ExpandedNode>GrayBody</ExpandedNode>
+  <ExpandedNode>OliveBody</ExpandedNode>
+  <ExpandedNode>GreenBody</ExpandedNode>
   <UnitType>Pixel</UnitType>
 </AESettingsSave>

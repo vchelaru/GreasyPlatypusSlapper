@@ -83,10 +83,10 @@ namespace GreasyPlatypusSlapper.Screens
 		/// <summary>
 		/// Transitions from the PlayerSelectionUI to the GameScreen proper UI and starts the fight. 
 		/// </summary>
-		/// <param name="playerInputList">A list of the different playerInput's representing the different players partipating in the game.</param>
-		public void StartGame(List<PlayerInput> playerInputList)
+		/// <param name="playerDataList">A list of the different playerInput's representing the different players partipating in the game.</param>
+		public void StartGame(List<PlayerData> playerDataList)
 		{
-			CreateTanksAndAssignInput(playerInputList);
+			CreateTanksAndAssignInput(playerDataList);
 			PlayerSelectionUIInstance.HideAnimation.Play();
 			PlayerSelectionUIInstance.HideAnimation.EndReached += () => { LoadUserInteractionState(new UIS_Playing()); };
 		}
@@ -118,16 +118,17 @@ namespace GreasyPlatypusSlapper.Screens
 		/// <summary>
 		/// Takes a list of PlayerInput objects, creates a tank for each one, and assigns its input profile to it. 
 		/// </summary>
-		/// <param name="playerInputList"></param>
-		void CreateTanksAndAssignInput(List<PlayerInput> playerInputList)
+		/// <param name="playerDataList"></param>
+		void CreateTanksAndAssignInput(List<PlayerData> playerDataList)
 		{
-			foreach(var playerInput in playerInputList)
+			foreach(var playerData in playerDataList)
 			{
 				var startPosition = GetUnusedStartPosition(); 
 				var newTank = TankFactory.CreateNew(startPosition.X, startPosition.Y);
 				newTank.Z = 1;
-				newTank.TeamIndex = lastTeamIndex++; 
-				newTank.LoadInput(playerInput); 
+				newTank.TeamIndex = lastTeamIndex++;
+				newTank.CurrentTankColorState = playerData.TankColor; 
+				newTank.LoadInput(playerData.PlayerInput); 
 			}
 
 			this.CameraEntityInstance.ObjectsWatching.AddRange(this.TankList);

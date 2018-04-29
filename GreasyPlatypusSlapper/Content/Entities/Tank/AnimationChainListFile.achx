@@ -26,7 +26,7 @@
     </Frame>
   </AnimationChain>
   <AnimationChain>
-    <Name>GrayBody</Name>
+    <Name>OliveBody</Name>
     <Frame>
       <TextureName>../../globalcontent/spritesheet.png</TextureName>
       <FrameLength>0.1</FrameLength>
@@ -45,6 +45,17 @@
       <RightCoordinate>64</RightCoordinate>
       <TopCoordinate>768</TopCoordinate>
       <BottomCoordinate>800</BottomCoordinate>
+    </Frame>
+  </AnimationChain>
+  <AnimationChain>
+    <Name>GreenBody</Name>
+    <Frame>
+      <TextureName>../../globalcontent/spritesheet.png</TextureName>
+      <FrameLength>0.1</FrameLength>
+      <LeftCoordinate>32</LeftCoordinate>
+      <RightCoordinate>64</RightCoordinate>
+      <TopCoordinate>640</TopCoordinate>
+      <BottomCoordinate>672</BottomCoordinate>
     </Frame>
   </AnimationChain>
 </AnimationChainArraySave>

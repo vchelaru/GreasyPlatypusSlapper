@@ -7,9 +7,18 @@ using System.Threading.Tasks;
 using FlatRedBall.Gum;
 using GreasyPlatypusSlapper.GumRuntimes;
 using FlatRedBall.Input;
+using Microsoft.Xna.Framework;
+using static GreasyPlatypusSlapper.Entities.Tank;
 
 namespace GreasyPlatypusSlapper.InputManagement
 {
+	public struct PlayerData
+	{
+		public PlayerInput PlayerInput { get; set; }
+		public PlayerSelectionBoxRuntime SelectionBox { get; set; }
+		public TankColor TankColor { get; set; }
+	}
+
 	/// <summary>
 	/// User Interaction State for controlling Player Addition, Subtraction, and Battle Start. 
 	/// </summary>
@@ -17,8 +26,10 @@ namespace GreasyPlatypusSlapper.InputManagement
 	{
 		private PlayerSelectionUIRuntime playerSelectionUIInstance;
 		private GameScreen gameScreen;
-		private Dictionary<object, PlayerInput> playerInputList = new Dictionary<object, PlayerInput>();
-		private Dictionary<object, PlayerSelectionBoxRuntime> playerBoxList = new Dictionary<object, PlayerSelectionBoxRuntime>();
+		private int maxPlayers = Enum.GetNames(typeof(TankColor)).Count() - 2; 
+
+		private Dictionary<object, PlayerData> playerDataList = new Dictionary<object, PlayerData>(); 
+
 		private bool justAdded = false;
 
 		public UIS_PlayerSelect(GameScreen gameScreen, PlayerSelectionUIRuntime playerSelectionUIInstance)
@@ -44,7 +55,7 @@ namespace GreasyPlatypusSlapper.InputManagement
 			{
 				ProcessStartRequests();
 			}
-			justAdded = false; 
+			justAdded = false;
 		}
 
 		private void ProcessAdditionsAndRemovals()
@@ -59,7 +70,7 @@ namespace GreasyPlatypusSlapper.InputManagement
 			for (int i = 0; i < InputManager.NumberOfConnectedGamePads; i++)
 			{
 				var gamePad = InputManager.Xbox360GamePads[i];
-				if (!playerInputList.ContainsKey(gamePad) && !playerBoxList.ContainsKey(gamePad))
+				if (!playerDataList.ContainsKey(gamePad))
 				{
 					if (gamePad.ButtonPushed(Xbox360GamePad.Button.A))
 					{
@@ -79,74 +90,73 @@ namespace GreasyPlatypusSlapper.InputManagement
 
 		private void ProcessKeyboardControllers()
 		{
-			if (!playerInputList.ContainsKey(InputManager.Keyboard) && !playerBoxList.ContainsKey(InputManager.Keyboard))
+			if (!playerDataList.ContainsKey(InputManager.Keyboard))
 			{
 				if (InputManager.Keyboard.AnyKeyPushed())
 				{
 					var playerInput = new PlayerInput(InputManager.Keyboard);
 					AddPlayer(InputManager.Keyboard, playerInput);
 				}
-				else
-				{
-					if (InputManager.Keyboard.KeyPushed(Microsoft.Xna.Framework.Input.Keys.Enter))
-					{
-						gameScreen.StartGame(playerInputList.Values.ToList<PlayerInput>());
-					}
-				}
 			}
 			else
 			{
 				if (InputManager.Keyboard.KeyPushed(Microsoft.Xna.Framework.Input.Keys.Escape))
 				{
-					RemovePlayer(InputManager.Keyboard); 
+					RemovePlayer(InputManager.Keyboard);
 				}
 			}
 		}
 
 		private void ProcessStartRequests()
 		{
-			foreach (var input in playerInputList.Values)
+			foreach (var data in playerDataList.Values)
 			{
-				if (input.Start.WasJustPressed)
+				if (data.PlayerInput.Start.WasJustPressed)
 				{
-					gameScreen.StartGame(playerInputList.Values.ToList<PlayerInput>());
+					gameScreen.StartGame(playerDataList.Values.ToList<PlayerData>());
 				}
 			}
-
 		}
 
 		private void AddPlayer(object inputObj, PlayerInput playerInput)
-		{
-			playerInputList.Add(inputObj, playerInput);
-			var playerBox = new PlayerSelectionBoxRuntime();
-			playerBox.Parent = playerSelectionUIInstance.GetPlayerList();
-			playerBoxList.Add(inputObj, playerBox);
-			justAdded = true;
-
-			TryToggleStartText(); 
+		{	
+			if (playerDataList.Count < maxPlayers)
+			{
+				var playerBox = new PlayerSelectionBoxRuntime();
+				playerBox.Parent = playerSelectionUIInstance.GetPlayerList();
+				var color = GetTankColor(); 
+				var playerData = new PlayerData() { PlayerInput = playerInput, SelectionBox = playerBox, TankColor = color };
+				playerDataList.Add(inputObj, playerData);
+				justAdded = true;
+				TryToggleStartText();
+			}
 		}
 
+		private TankColor GetTankColor()
+		{
+			var colorIndex = playerDataList.Count + 2;
+			return (TankColor)Enum.Parse(typeof(TankColor), colorIndex.ToString());
+		}
 		private void RemovePlayer(object inputObj)
 		{
-			var playerBox = playerBoxList[inputObj];
-			playerBox.Parent = null;
-			playerBox.Destroy();
-			playerBoxList.Remove(inputObj);
+			var data = playerDataList[inputObj];
+			data.SelectionBox.Parent = null;
+			data.SelectionBox.Destroy();
 
-			playerInputList.Remove(inputObj);
+			playerDataList.Remove(inputObj);
 
 			TryToggleStartText();
 		}
 
 		private void TryToggleStartText()
 		{
-			if (playerInputList.Values.Count > 0 && playerSelectionUIInstance.CurrentReadyToStartState == PlayerSelectionUIRuntime.ReadyToStart.No)
+			if (playerDataList.Values.Count > 0 && playerSelectionUIInstance.CurrentReadyToStartState == PlayerSelectionUIRuntime.ReadyToStart.No)
 			{
-				playerSelectionUIInstance.CurrentReadyToStartState = PlayerSelectionUIRuntime.ReadyToStart.Yes; 
+				playerSelectionUIInstance.CurrentReadyToStartState = PlayerSelectionUIRuntime.ReadyToStart.Yes;
 			}
-			else if (playerInputList.Values.Count == 0 && playerSelectionUIInstance.CurrentReadyToStartState == PlayerSelectionUIRuntime.ReadyToStart.Yes)
+			else if (playerDataList.Values.Count == 0 && playerSelectionUIInstance.CurrentReadyToStartState == PlayerSelectionUIRuntime.ReadyToStart.Yes)
 			{
-				playerSelectionUIInstance.CurrentReadyToStartState = PlayerSelectionUIRuntime.ReadyToStart.No; 
+				playerSelectionUIInstance.CurrentReadyToStartState = PlayerSelectionUIRuntime.ReadyToStart.No;
 			}
 		}
 	}
