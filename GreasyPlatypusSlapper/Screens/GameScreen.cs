@@ -34,7 +34,7 @@ namespace GreasyPlatypusSlapper.Screens
 			CreateTanksAndAssignInput();
 
 			this.CameraEntityInstance.ObjectsWatching.AddRange(this.TankList);
-
+            this.CameraEntityInstance.CurrentLevel = TestLevel;
 			
 		}
 

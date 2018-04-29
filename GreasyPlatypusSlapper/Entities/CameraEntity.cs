@@ -9,11 +9,13 @@ using FlatRedBall.Graphics.Animation;
 using FlatRedBall.Graphics.Particle;
 using FlatRedBall.Math.Geometry;
 using FlatRedBall.Math;
+using FlatRedBall.TileGraphics;
 
 namespace GreasyPlatypusSlapper.Entities
 {
 	public partial class CameraEntity
 	{
+        public LayeredTileMap CurrentLevel { get; set; }
 
         public PositionedObjectList<PositionedObject> ObjectsWatching { get; private set; } = new PositionedObjectList<PositionedObject>();
 
@@ -56,6 +58,25 @@ namespace GreasyPlatypusSlapper.Entities
 
             Camera.Main.X = (minX + maxX) / 2.0f;
             Camera.Main.Y = (minY + maxY) / 2.0f;
+
+            KeepCameraInBounds();
+
+        }
+
+        private void KeepCameraInBounds()
+        {
+            var minCameraX = 0 + Camera.Main.OrthogonalWidth / 2.0f;
+            var maxCameraX = CurrentLevel.Width - Camera.Main.OrthogonalWidth / 2.0f;
+
+            Camera.Main.X = Math.Max(Camera.Main.X, minCameraX);
+            Camera.Main.X = Math.Min(Camera.Main.X, maxCameraX);
+
+            var maxCameraY = 0 - Camera.Main.OrthogonalHeight / 2.0f;
+            var minCameraY = -CurrentLevel.Height + Camera.Main.OrthogonalHeight / 2.0f;
+            Camera.Main.Y = Math.Min(Camera.Main.Y, maxCameraY);
+            Camera.Main.Y = Math.Max(Camera.Main.Y, minCameraY);
+
+
         }
 
         private void CustomDestroy()
