@@ -121,7 +121,9 @@ namespace GreasyPlatypusSlapper.InputManagement
 			var playerBox = new PlayerSelectionBoxRuntime();
 			playerBox.Parent = playerSelectionUIInstance.GetPlayerList();
 			playerBoxList.Add(inputObj, playerBox);
-			justAdded = true; 
+			justAdded = true;
+
+			TryToggleStartText(); 
 		}
 
 		private void RemovePlayer(object inputObj)
@@ -132,6 +134,20 @@ namespace GreasyPlatypusSlapper.InputManagement
 			playerBoxList.Remove(inputObj);
 
 			playerInputList.Remove(inputObj);
+
+			TryToggleStartText();
+		}
+
+		private void TryToggleStartText()
+		{
+			if (playerInputList.Values.Count > 0 && playerSelectionUIInstance.CurrentReadyToStartState == PlayerSelectionUIRuntime.ReadyToStart.No)
+			{
+				playerSelectionUIInstance.CurrentReadyToStartState = PlayerSelectionUIRuntime.ReadyToStart.Yes; 
+			}
+			else if (playerInputList.Values.Count == 0 && playerSelectionUIInstance.CurrentReadyToStartState == PlayerSelectionUIRuntime.ReadyToStart.Yes)
+			{
+				playerSelectionUIInstance.CurrentReadyToStartState = PlayerSelectionUIRuntime.ReadyToStart.No; 
+			}
 		}
 	}
 }
