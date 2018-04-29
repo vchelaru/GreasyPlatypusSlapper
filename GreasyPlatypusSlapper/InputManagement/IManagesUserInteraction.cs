@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace GreasyPlatypusSlapper.InputManagement
 {
-	public interface IUserInputState
+	public interface IManagesUserInteraction
 	{
-		void Setup();
-		void Teardown();
-		void Update(); 
+		void LoadUserInteractionState(IUserInteractionState state);
 	}
 }

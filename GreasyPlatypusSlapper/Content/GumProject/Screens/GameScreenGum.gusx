@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ScreenSave xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>GameScreenGum</Name>
+  <State>
+    <Name>Default</Name>
+    <Variable>
+      <Type>ReadyToStartState</Type>
+      <Name>PlayerSelectionUIInstance.ReadyToStartState</Name>
+      <Value xsi:type="xsd:string">No</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>State</Type>
+      <Name>PlayerSelectionUIInstance.State</Name>
+      <Value xsi:type="xsd:string">Default</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>VisibilityState</Type>
+      <Name>PlayerSelectionUIInstance.VisibilityState</Name>
+      <Value xsi:type="xsd:string">Shown</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+  </State>
+  <State>
+    <Name>PlayerSelection</Name>
+  </State>
+  <State>
+    <Name>Game</Name>
+  </State>
+  <Instance>
+    <Name>PlayerSelectionUIInstance</Name>
+    <BaseType>PlayerSelectionUI</BaseType>
+  </Instance>
+</ScreenSave>

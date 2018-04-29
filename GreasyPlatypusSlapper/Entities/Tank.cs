@@ -12,13 +12,12 @@ using GreasyPlatypusSlapper.DataTypes;
 using Microsoft.Xna.Framework;
 using GreasyPlatypusSlapper.Factories;
 using Microsoft.Xna.Framework.Input;
+using GreasyPlatypusSlapper.InputManagement;
 
 namespace GreasyPlatypusSlapper.Entities
 {
 	public partial class Tank
 	{
-
-
 		I2DInput movementInput;
 		I2DInput aimingInput;
 		IPressableInput shootingInput;
@@ -27,6 +26,7 @@ namespace GreasyPlatypusSlapper.Entities
 		IPressableInput boostInput;
 		double lastBoostTime;
 		float activeBoostModifier;
+		PlayerInput playerInput;
 
 		public int TeamIndex { get; set; }
 		public float CurrentSpeed
@@ -70,11 +70,6 @@ namespace GreasyPlatypusSlapper.Entities
 			}
 		}
 
-		public void AssignDefaultInput()
-		{
-
-		}
-
 		public void Die()
 		{
 			// TODO: play effects
@@ -82,209 +77,208 @@ namespace GreasyPlatypusSlapper.Entities
 			Destroy();
 		}
 
-		public void LoadInput(I2DInput movementInput, I2DInput aimingInput, IPressableInput shootingInput, IPressableInput boostInput)
+		public void LoadInput(PlayerInput playerInput)
 		{
-			this.movementInput = movementInput ?? throw new ArgumentNullException("movementInput must not be null.");
-			this.aimingInput = aimingInput ?? throw new ArgumentNullException("aimingInput must not be null.");
-			this.shootingInput = shootingInput ?? throw new ArgumentNullException("shootingInput must not be null.");
+			if (playerInput == null) throw new ArgumentNullException("playerInput", "playerInput cannot be a null refernece.");
+			this.playerInput = playerInput;
+			this.movementInput = playerInput.MovementInput;
+			this.aimingInput = playerInput.AimingInput;
+			this.shootingInput = playerInput.ShootingInput;
 
-			if (boostInput == null) throw new ArgumentNullException("boostInput must not be null");
 			if (GlobalContent.FeatureFlags[FeatureFlags.EnableBoost].IsEnabled)
 			{
-				this.boostInput = boostInput;
+				this.boostInput = playerInput.BoostInput;
 			}
 		}
 
-        private void CustomActivity()
+		private void CustomActivity()
 		{
 			CalculateBoostModifier();
 
-            ApplyMovement();
+			ApplyMovement();
+			ApplyTurretAiming();
+			ShootingActivity();
 
-            ApplyTurretAiming();
+			if (GlobalContent.FeatureFlags[FeatureFlags.EnableTankTreads].IsEnabled)
+			{
+				TankTreadActivity();
+			}
 
-            ShootingActivity();
+			if (GlobalContent.FeatureFlags[FeatureFlags.EnableSmokeOnLowHealth].IsEnabled)
+			{
+				SmokeInstance.Emitting = CurrentHealthPercent < LowHealthThreshold;
+			}
 
-            if(GlobalContent.FeatureFlags[FeatureFlags.EnableTankTreads].IsEnabled)
-            {
-                TankTreadActivity();
-            }
-
-            if(GlobalContent.FeatureFlags[FeatureFlags.EnableSmokeOnLowHealth].IsEnabled)
-            {
-                SmokeInstance.Emitting = CurrentHealthPercent < LowHealthThreshold;
-            }
-            
 		}
 
-        private void ApplyMovement()
-        {
-            if (GlobalContent.FeatureFlags[FeatureFlags.EnableTurnBasedMovement].IsEnabled)
-            {
-                ApplyTurnBasedMovement();
-            }
-            else
-            {
-                if(movementInput?.Magnitude > .2f)
-                {
-                    var desiredDirection = movementInput.GetAngle().Value;
+		private void ApplyMovement()
+		{
+			if (GlobalContent.FeatureFlags[FeatureFlags.EnableTurnBasedMovement].IsEnabled)
+			{
+				ApplyTurnBasedMovement();
+			}
+			else
+			{
+				if (movementInput?.Magnitude > .2f)
+				{
+					var desiredDirection = movementInput.GetAngle().Value;
 
-                    var direction = Math.Sign(FlatRedBall.Math.MathFunctions.AngleToAngle(RotationZ, desiredDirection));
+					var direction = Math.Sign(FlatRedBall.Math.MathFunctions.AngleToAngle(RotationZ, desiredDirection));
 
-                    var rotationSpeed = 3;
-                    var forwardSpeed = 100;
+					var rotationSpeed = 3;
+					var forwardSpeed = 100;
 
-                    this.RotationZVelocity = direction * rotationSpeed;
+					this.RotationZVelocity = direction * rotationSpeed;
 
-                    this.Velocity = this.RotationMatrix.Right * forwardSpeed;
-                }
-                else
-                {
-                    this.Velocity = Vector3.Zero;
-                    this.RotationZVelocity = 0;
-                }
-            }
+					this.Velocity = this.RotationMatrix.Right * forwardSpeed;
+				}
+				else
+				{
+					this.Velocity = Vector3.Zero;
+					this.RotationZVelocity = 0;
+				}
+			}
 
-	        if (activeBoostModifier > 0)
-	        {
-		        Velocity *= activeBoostModifier;
-	        }
-        }
+			if (activeBoostModifier > 0)
+			{
+				Velocity *= activeBoostModifier;
+			}
+		}
 
-        private void ApplyTurretAiming()
-        {
-            if (GlobalContent.FeatureFlags[FeatureFlags.EnableTurnBasedMovement].IsEnabled)
-            {
-                ApplyTurnBasedTurretAiming();
-            }
-            else
-            {
-                ApplyAbsoluteBasedTurretAiming();
-            }
-        }
+		private void ApplyTurretAiming()
+		{
+			if (GlobalContent.FeatureFlags[FeatureFlags.EnableTurnBasedMovement].IsEnabled)
+			{
+				ApplyTurnBasedTurretAiming();
+			}
+			else
+			{
+				ApplyAbsoluteBasedTurretAiming();
+			}
+		}
 
-        private void ApplyAbsoluteBasedTurretAiming()
-        {
-            const int rotationSpeed = 3;
+		private void ApplyAbsoluteBasedTurretAiming()
+		{
+			const int rotationSpeed = 3;
 
-            if (aimingInput?.Magnitude > .2f)
-            {
-                var desiredDirection = aimingInput.GetAngle().Value;
+			if (aimingInput?.Magnitude > .2f)
+			{
+				var desiredDirection = aimingInput.GetAngle().Value;
 
-                var direction = Math.Sign(FlatRedBall.Math.MathFunctions.AngleToAngle(TurretInstance.RotationZ, desiredDirection));
+				var direction = Math.Sign(FlatRedBall.Math.MathFunctions.AngleToAngle(TurretInstance.RotationZ, desiredDirection));
 
-                TurretInstance.RelativeRotationZVelocity = direction * rotationSpeed;
-            }
-            else
-            {
-                TurretInstance.RelativeRotationZVelocity = 0;
-            }
-        }
+				TurretInstance.RelativeRotationZVelocity = direction * rotationSpeed;
+			}
+			else
+			{
+				TurretInstance.RelativeRotationZVelocity = 0;
+			}
+		}
 
-        private void ApplyTurnBasedTurretAiming()
-        {
-            System.Diagnostics.Debug.WriteLine("Turn!");
+		private void ApplyTurnBasedTurretAiming()
+		{
+			System.Diagnostics.Debug.WriteLine("Turn!");
 
-            var rotationVelocity = 0f;
-            if (aimingInput?.Magnitude > .2f)
-            {
-                rotationVelocity = -1 * aimingInput?.X ?? rotationVelocity;
-            }
-            TurretInstance.RelativeRotationZVelocity = rotationVelocity;
-        }
+			var rotationVelocity = 0f;
+			if (aimingInput?.Magnitude > .2f)
+			{
+				rotationVelocity = -1 * aimingInput?.X ?? rotationVelocity;
+			}
+			TurretInstance.RelativeRotationZVelocity = rotationVelocity;
+		}
 
-        private void ShootingActivity()
-        {
-            if(shootingInput?.WasJustPressed == true)
-            {
-                var x = TurretInstance.X;
-                var y = TurretInstance.Y;
-                var bullet = Factories.BulletFactory.CreateNew(x, y);
-                bullet.TeamIndex = this.TeamIndex;
-                bullet.RotationZ = TurretInstance.RotationZ;
+		private void ShootingActivity()
+		{
+			if (shootingInput?.WasJustPressed == true)
+			{
+				var x = TurretInstance.X;
+				var y = TurretInstance.Y;
+				var bullet = Factories.BulletFactory.CreateNew(x, y);
+				bullet.TeamIndex = this.TeamIndex;
+				bullet.RotationZ = TurretInstance.RotationZ;
 
-                var BulletSpeed = 500;
-                bullet.Launch(TurretInstance.RotationMatrix.Right * BulletSpeed);
-            }
-        }
+				var BulletSpeed = 500;
+				bullet.Launch(TurretInstance.RotationMatrix.Right * BulletSpeed);
+			}
+		}
 
-        private void TankTreadActivity()
-        {
-            var timeSinceLastTread = TimeManager.CurrentTime - lastTreadTime;
-            var distSinceLastTread = CurrentSpeed * timeSinceLastTread;
+		private void TankTreadActivity()
+		{
+			var timeSinceLastTread = TimeManager.CurrentTime - lastTreadTime;
+			var distSinceLastTread = CurrentSpeed * timeSinceLastTread;
 
-            if(distSinceLastTread >= TreadSpacing)
-            {
-                var tread = TreadEffectFactory.CreateNew(Position.X, Position.Y);
-                tread.RotationZ = RotationZ;
-                lastTreadTime = TimeManager.CurrentTime;
-            }
+			if (distSinceLastTread >= TreadSpacing)
+			{
+				var tread = TreadEffectFactory.CreateNew(Position.X, Position.Y);
+				tread.RotationZ = RotationZ;
+				lastTreadTime = TimeManager.CurrentTime;
+			}
 
-        }
+		}
 
-	    private void ApplyTurnBasedMovement()
-	    {
-	        // copied from previous movement
-	        const int rotationSpeed = -3;
-	        const int forwardSpeed = 100;
+		private void ApplyTurnBasedMovement()
+		{
+			// copied from previous movement
+			const int rotationSpeed = -3;
+			const int forwardSpeed = 100;
 
-		    var forwardVelocity = 0f;
-		    var rotationVelocity = 0f;
+			var forwardVelocity = 0f;
+			var rotationVelocity = 0f;
 
-		    if (movementInput?.Magnitude > .2f)
-		    {
-			    forwardVelocity = forwardSpeed * movementInput.Y;
-			    rotationVelocity = rotationSpeed * movementInput.X;
-		    }
+			if (movementInput?.Magnitude > .2f)
+			{
+				forwardVelocity = forwardSpeed * movementInput.Y;
+				rotationVelocity = rotationSpeed * movementInput.X;
+			}
 
-		    RotationZVelocity = rotationVelocity;
-		    Velocity = RotationMatrix.Right * forwardVelocity;
-	    }
+			RotationZVelocity = rotationVelocity;
+			Velocity = RotationMatrix.Right * forwardVelocity;
+		}
 
-	    private void CalculateBoostModifier()
-	    {
-		    if (!GlobalContent.FeatureFlags[FeatureFlags.EnableBoost].IsEnabled)
-		    {
-			    return;
-		    }
+		private void CalculateBoostModifier()
+		{
+			if (!GlobalContent.FeatureFlags[FeatureFlags.EnableBoost].IsEnabled)
+			{
+				return;
+			}
 
-		    var timeUntilNextBoost = lastBoostTime + BoostDurationInSeconds + BoostTimeoutInSeconds;
+			var timeUntilNextBoost = lastBoostTime + BoostDurationInSeconds + BoostTimeoutInSeconds;
 
-		    // Allow a fresh boost if timeout is over
-		    if (boostInput?.WasJustPressed == true && timeUntilNextBoost < TimeManager.CurrentTime)
-		    {
-			    lastBoostTime = TimeManager.CurrentTime;
-		    }
+			// Allow a fresh boost if timeout is over
+			if (boostInput?.WasJustPressed == true && timeUntilNextBoost < TimeManager.CurrentTime)
+			{
+				lastBoostTime = TimeManager.CurrentTime;
+			}
 
-		    var timeSinceBoost = TimeManager.CurrentTime - lastBoostTime;
-	        var isInBoost = timeSinceBoost < BoostDurationInSeconds;
-		    var isInPenalty = !isInBoost &&
-		                       timeSinceBoost < BoostDurationInSeconds + BoostPenaltyDurationInSeconds;
+			var timeSinceBoost = TimeManager.CurrentTime - lastBoostTime;
+			var isInBoost = timeSinceBoost < BoostDurationInSeconds;
+			var isInPenalty = !isInBoost &&
+							   timeSinceBoost < BoostDurationInSeconds + BoostPenaltyDurationInSeconds;
 
-		    if (isInBoost)
-		    {
-			    activeBoostModifier = BoostSpeedMultiplier;
-		    }
-		    else if (isInPenalty)
-		    {
-			    activeBoostModifier = BoostPenaltySpeedMultiplier;
-		    }
-		    else
-		    {
-			    activeBoostModifier = 0;
-		    }
-	    }
+			if (isInBoost)
+			{
+				activeBoostModifier = BoostSpeedMultiplier;
+			}
+			else if (isInPenalty)
+			{
+				activeBoostModifier = BoostPenaltySpeedMultiplier;
+			}
+			else
+			{
+				activeBoostModifier = 0;
+			}
+		}
 
-        private void CustomDestroy()
+		private void CustomDestroy()
 		{
 
 
 		}
 
-        private static void CustomLoadStaticContent(string contentManagerName)
-        {
+		private static void CustomLoadStaticContent(string contentManagerName)
+		{
 
 
-        }
+		}
 	}
 }

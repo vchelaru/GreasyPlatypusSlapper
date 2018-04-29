@@ -16,31 +16,49 @@ using GreasyPlatypusSlapper.Entities;
 using FlatRedBall.TileCollisions;
 using RedGrin;
 using Microsoft.Xna.Framework.Input;
+using GreasyPlatypusSlapper.InputManagement;
+using GreasyPlatypusSlapper.Factories;
+using Microsoft.Xna.Framework;
 
 namespace GreasyPlatypusSlapper.Screens
 {
-	public partial class GameScreen : INetworkArena
+	public partial class GameScreen : INetworkArena, IManagesUserInteraction
 	{
 		TileShapeCollection solidCollision;
 		TileShapeCollection roadCollision;
 		CollisionRelationship roadVsTankRelationship;
+		IUserInteractionState currentUserInteractionState;
+		Vector2 lastStartPosition = new Vector2(200, -200);
+		int lastTeamIndex = 0; 
 
 		void CustomInitialize()
 		{
 			InitializeActivity();
-
-			//this.Tank1Test.AssignDefaultInput();
-			this.Tank2Test.TeamIndex = 1;
-			CreateTanksAndAssignInput();
-
-			this.CameraEntityInstance.ObjectsWatching.AddRange(this.TankList);
-            this.CameraEntityInstance.CurrentLevel = TestLevel;
-			
+			LoadUserInteractionState(new UIS_PlayerSelect(this, PlayerSelectionUIInstance)); 
 		}
 
 		private void InitializeActivity()
 		{
 			InitializeCollision();
+
+            this.CameraEntityInstance.CurrentLevel = TestLevel;
+
+		}
+
+		void CustomActivity(bool firstTimeCalled)
+		{
+#if DEBUG
+			RestartActivity();
+
+#endif
+		
+			CustomCollisionActivity();
+			currentUserInteractionState.Update(); 
+		}
+
+		void CustomDestroy()
+		{
+
 
 		}
 
@@ -62,6 +80,17 @@ namespace GreasyPlatypusSlapper.Screens
 			roadVsTankRelationship.IsActive = false;
 		}
 
+		/// <summary>
+		/// Transitions from the PlayerSelectionUI to the GameScreen proper UI and starts the fight. 
+		/// </summary>
+		/// <param name="playerInputList">A list of the different playerInput's representing the different players partipating in the game.</param>
+		public void StartGame(List<PlayerInput> playerInputList)
+		{
+			CreateTanksAndAssignInput(playerInputList);
+			PlayerSelectionUIInstance.HideAnimation.Play();
+			PlayerSelectionUIInstance.HideAnimation.EndReached += () => { LoadUserInteractionState(new UIS_Playing()); };
+		}
+
 		private void HandleBulletVsTankCollision(Tank tank, Bullet bullet)
 		{
 			if (bullet.TeamIndex != tank.TeamIndex)
@@ -69,17 +98,6 @@ namespace GreasyPlatypusSlapper.Screens
 				tank.ApplyDamage(bullet.Damage);
 				bullet.Destroy();
 			}
-		}
-
-		void CustomActivity(bool firstTimeCalled)
-		{
-#if DEBUG
-			RestartActivity();
-
-#endif
-
-			CustomCollisionActivity();
-
 		}
 
 		private void CustomCollisionActivity()
@@ -97,45 +115,33 @@ namespace GreasyPlatypusSlapper.Screens
 			}
 		}
 
-		void CustomDestroy()
+		/// <summary>
+		/// Takes a list of PlayerInput objects, creates a tank for each one, and assigns its input profile to it. 
+		/// </summary>
+		/// <param name="playerInputList"></param>
+		void CreateTanksAndAssignInput(List<PlayerInput> playerInputList)
 		{
+			foreach(var playerInput in playerInputList)
+			{
+				var startPosition = GetUnusedStartPosition(); 
+				var newTank = TankFactory.CreateNew(startPosition.X, startPosition.Y);
+				newTank.Z = 1;
+				newTank.TeamIndex = lastTeamIndex++; 
+				newTank.LoadInput(playerInput); 
+			}
 
-
+			this.CameraEntityInstance.ObjectsWatching.AddRange(this.TankList);
 		}
 
-		void CreateTanksAndAssignInput()
+		/// <summary>
+		/// Gets a new, vacant position for a tank to spawn in. 
+		/// </summary>
+		/// <returns></returns>
+		private Vector2 GetUnusedStartPosition()
 		{
-			//Test code for a single input. 
-			I2DInput movementInput;
-			I2DInput aimingInput;
-			IPressableInput shootingInput;
-			IPressableInput boostInput; 
-
-			if (InputManager.NumberOfConnectedGamePads > 0)
-			{
-				var gamePad = InputManager.Xbox360GamePads[0];//InputManager.Xbox360GamePads[i];
-				movementInput = gamePad.LeftStick;
-				aimingInput = gamePad.RightStick;
-				shootingInput = gamePad.RightTrigger;
-				boostInput = gamePad.LeftTrigger; 
-			}
-			else
-			{
-				var keyboard = InputManager.Keyboard;
-				movementInput = keyboard.Get2DInput(Microsoft.Xna.Framework.Input.Keys.A,
-					Microsoft.Xna.Framework.Input.Keys.D,
-					Microsoft.Xna.Framework.Input.Keys.W,
-					Microsoft.Xna.Framework.Input.Keys.S);
-
-				aimingInput = keyboard.Get2DInput(Microsoft.Xna.Framework.Input.Keys.Left,
-					Microsoft.Xna.Framework.Input.Keys.Right,
-					Microsoft.Xna.Framework.Input.Keys.Up,
-					Microsoft.Xna.Framework.Input.Keys.Down);
-
-				shootingInput = keyboard.GetKey(Microsoft.Xna.Framework.Input.Keys.Space);
-				boostInput = keyboard.GetKey(Keys.Q);
-			}
-			Tank1Test.LoadInput(movementInput, aimingInput, shootingInput, boostInput);
+			var toReturn = lastStartPosition;
+			lastStartPosition.X += 200;
+			return toReturn; 
 		}
 
 		static void CustomLoadStaticContent(string contentManagerName)
@@ -154,6 +160,17 @@ namespace GreasyPlatypusSlapper.Screens
 		public void RequestDestroyEntity(INetworkEntity entity)
 		{
 			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Loads a IUserInteractionState, which will manage what input to accept at any particular time. 
+		/// </summary>
+		/// <param name="state"></param>
+		public void LoadUserInteractionState(IUserInteractionState state)
+		{
+			currentUserInteractionState?.Teardown();
+			currentUserInteractionState = state ?? throw new ArgumentNullException("Must pass in a non-null IUserInteractionState implementation.");
+			currentUserInteractionState?.Setup(); 
 		}
 	}
 }

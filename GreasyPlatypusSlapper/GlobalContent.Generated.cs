@@ -24,6 +24,7 @@ namespace GreasyPlatypusSlapper
         public static Microsoft.Xna.Framework.Graphics.Texture2D spriteSheet { get; set; }
         public static FlatRedBall.Graphics.Animation.AnimationChainList Particles { get; set; }
         public static System.Collections.Generic.Dictionary<string, GreasyPlatypusSlapper.DataTypes.FeatureFlags> FeatureFlags { get; set; }
+        public static FlatRedBall.Gum.GumIdb GumProject { get; set; }
         [System.Obsolete("Use GetFile instead")]
         public static object GetStaticMember (string memberName) 
         {
@@ -35,6 +36,8 @@ namespace GreasyPlatypusSlapper
                     return Particles;
                 case  "FeatureFlags":
                     return FeatureFlags;
+                case  "GumProject":
+                    return GumProject;
             }
             return null;
         }
@@ -48,6 +51,8 @@ namespace GreasyPlatypusSlapper
                     return Particles;
                 case  "FeatureFlags":
                     return FeatureFlags;
+                case  "GumProject":
+                    return GumProject;
             }
             return null;
         }
@@ -71,7 +76,10 @@ namespace GreasyPlatypusSlapper
                     FeatureFlags = temporaryCsvObject;
                 }
             }
+            FlatRedBall.Gum.GumIdb.StaticInitialize("content/gumproject/gumproject.gumx"); FlatRedBall.Gum.GumIdbExtensions.RegisterTypes();  FlatRedBall.Gui.GuiManager.BringsClickedWindowsToFront = false;FlatRedBall.FlatRedBallServices.GraphicsOptions.SizeOrOrientationChanged += (not, used) => { FlatRedBall.Gum.GumIdb.UpdateDisplayToMainFrbCamera(); };Gum.Wireframe.GraphicalUiElement.ShowLineRectangles = false;
             			IsInitialized = true;
+            // Added by GumPlugin becasue of the Show Mouse checkbox on the .gumx:
+            FlatRedBall.FlatRedBallServices.Game.IsMouseVisible = true;
             #if DEBUG && WINDOWS
             InitializeFileWatch();
             #endif
@@ -112,6 +120,10 @@ namespace GreasyPlatypusSlapper
                 if (relativeFileName == "content/globalcontent/particles.achx")
                 {
                     Reload(Particles);
+                }
+                if (relativeFileName == "content/gumproject/gumproject.gumx")
+                {
+                    Reload(GumProject);
                 }
             }
             catch{}

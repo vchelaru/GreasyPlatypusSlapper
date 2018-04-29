@@ -74,12 +74,28 @@
       <DependentUpon>Turret.cs</DependentUpon>
     </Compile>
     <Compile Include="Factories\BulletFactory.Generated.cs" />
+    <Compile Include="Factories\TankFactory.Generated.cs" />
     <Compile Include="Factories\TreadEffectFactory.Generated.cs" />
     <Compile Include="FileAliases.Generated.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GlobalContent.Generated.cs" />
-    <Compile Include="InputManagement\IManagesInputStates.cs" />
-    <Compile Include="InputManagement\IUserInputState.cs" />
+    <Compile Include="GumRuntimes\CircleRuntime.Generated.cs" />
+    <Compile Include="GumRuntimes\ColoredRectangleRuntime.Generated.cs" />
+    <Compile Include="GumRuntimes\ContainerRuntime.Generated.cs" />
+    <Compile Include="GumRuntimes\GameScreenGumRuntime.Generated.cs" />
+    <Compile Include="GumRuntimes\GumIdb.Generated.cs" />
+    <Compile Include="GumRuntimes\NineSliceRuntime.Generated.cs" />
+    <Compile Include="GumRuntimes\PlayerSelectionBoxRuntime.Generated.cs" />
+    <Compile Include="GumRuntimes\PlayerSelectionUIRuntime.Custom.cs" />
+    <Compile Include="GumRuntimes\PlayerSelectionUIRuntime.Generated.cs" />
+    <Compile Include="GumRuntimes\RectangleRuntime.Generated.cs" />
+    <Compile Include="GumRuntimes\SpriteRuntime.Generated.cs" />
+    <Compile Include="GumRuntimes\TextRuntime.Generated.cs" />
+    <Compile Include="InputManagement\IManagesUserInteraction.cs" />
+    <Compile Include="InputManagement\IUserInteractionState.cs" />
+    <Compile Include="InputManagement\PlayerInput.cs" />
+    <Compile Include="InputManagement\UIS_Playing.cs" />
+    <Compile Include="InputManagement\UIS_PlayerSelect.cs" />
     <Compile Include="Performance\IEntityFactory.Generated.cs" />
     <Compile Include="Performance\PoolList.Generated.cs" />
     <Compile Include="Program.cs" />
@@ -123,7 +139,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Libraries\DesktopGl\Debug\FlatRedBall.Forms.dll</HintPath>
     </Reference>
-    <Reference Include="FlatRedBallDesktopGL, Version=2016.3.17.461, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FlatRedBallDesktopGL, Version=2018.4.28.751, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Libraries\DesktopGl\Debug\FlatRedBallDesktopGL.dll</HintPath>
     </Reference>
@@ -174,6 +190,122 @@
     <None Include="content\globalcontent\spritesheet.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>spriteSheet</Name>
+    </None>
+    <None Include="content\gumproject\components\playerselectionbox.gucx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>playerselectionbox</Name>
+    </None>
+    <None Include="content\gumproject\components\playerselectionui.gucx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>playerselectionui</Name>
+    </None>
+    <None Include="content\gumproject\fontcache\font18arial.fnt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>font18arial</Name>
+    </None>
+    <None Include="content\gumproject\fontcache\font18arial_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Font18Arial_0</Name>
+    </None>
+    <None Include="content\gumproject\fontcache\font24arial.fnt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>font24arial</Name>
+    </None>
+    <None Include="content\gumproject\fontcache\font24arial_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Font24Arial_0</Name>
+    </None>
+    <None Include="content\gumproject\fontcache\font32arial.fnt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>font32arial</Name>
+    </None>
+    <None Include="content\gumproject\fontcache\font32arial_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Font32Arial_0</Name>
+    </None>
+    <None Include="content\gumproject\fontcache\font42arial.fnt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>font42arial</Name>
+    </None>
+    <None Include="content\gumproject\fontcache\font42arial_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Font42Arial_0</Name>
+    </None>
+    <None Include="content\gumproject\gumproject.gumx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>GumProject</Name>
+    </None>
+    <None Include="content\gumproject\screens\gamescreengum.gusx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>gamescreengum</Name>
+    </None>
+    <None Include="content\gumproject\standards\circle.gutx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>circle</Name>
+    </None>
+    <None Include="content\gumproject\standards\coloredrectangle.gutx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>coloredrectangle</Name>
+    </None>
+    <None Include="content\gumproject\standards\component.gutx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>component</Name>
+    </None>
+    <None Include="content\gumproject\standards\container.gutx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>container</Name>
+    </None>
+    <None Include="content\gumproject\standards\nineslice.gutx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>nineslice</Name>
+    </None>
+    <None Include="content\gumproject\standards\rectangle.gutx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>rectangle</Name>
+    </None>
+    <None Include="content\gumproject\standards\sprite.gutx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>sprite</Name>
+    </None>
+    <None Include="content\gumproject\standards\standardgraphics\red_bottomcenter.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>red_bottomcenter</Name>
+    </None>
+    <None Include="content\gumproject\standards\standardgraphics\red_bottomleft.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>red_bottomleft</Name>
+    </None>
+    <None Include="content\gumproject\standards\standardgraphics\red_bottomright.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>red_bottomright</Name>
+    </None>
+    <None Include="content\gumproject\standards\standardgraphics\red_center.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>red_center</Name>
+    </None>
+    <None Include="content\gumproject\standards\standardgraphics\red_left.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>red_left</Name>
+    </None>
+    <None Include="content\gumproject\standards\standardgraphics\red_right.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>red_right</Name>
+    </None>
+    <None Include="content\gumproject\standards\standardgraphics\red_topcenter.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>red_topcenter</Name>
+    </None>
+    <None Include="content\gumproject\standards\standardgraphics\red_topleft.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>red_topleft</Name>
+    </None>
+    <None Include="content\gumproject\standards\standardgraphics\red_topright.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>red_topright</Name>
+    </None>
+    <None Include="content\gumproject\standards\text.gutx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>text</Name>
     </None>
     <None Include="content\screens\gamescreen\levels\testlevel.tmx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -245,7 +377,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RedGrin\RedGrin.csproj">
-      <Project>{9A4FD6E3-7795-4C93-B670-7BE2C3DC8639}</Project>
+      <Project>{9a4fd6e3-7795-4c93-b670-7be2c3dc8639}</Project>
       <Name>RedGrin</Name>
     </ProjectReference>
   </ItemGroup>

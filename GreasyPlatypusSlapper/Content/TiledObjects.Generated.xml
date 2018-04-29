@@ -7,4 +7,18 @@
   <objecttype name="TreadEffect">
     <property name="AlphaRate" type="float" default="-0.15" />
   </objecttype>
+  <objecttype name="Tank">
+    <property name="SpriteInstanceCurrentChainName" type="string" default="OrangeBody" />
+    <property name="DefaultSpeed" type="float" default="100" />
+    <property name="MudSpeed" type="float" default="50" />
+    <property name="RoadSpeed" type="float" default="200" />
+    <property name="TreadSpacing" type="float" default="5" />
+    <property name="MaxHealth" type="float" default="100" />
+    <property name="BoostDurationInSeconds" type="float" default="1" />
+    <property name="BoostTimeoutInSeconds" type="float" default="5" />
+    <property name="BoostPenaltySpeedMultiplier" type="float" default="0.1" />
+    <property name="BoostPenaltyDurationInSeconds" type="float" default="1" />
+    <property name="LowHealthThreshold" type="float" default="0.3" />
+    <property name="BoostSpeedMultiplier" type="float" default="5" />
+  </objecttype>
 </objecttypes>
